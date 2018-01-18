@@ -49,7 +49,7 @@ stest$ms_intensity_data <- function(dat, d.log2 = NULL, pdffile = "_stest.pdf") 
     # estimation via the gamma distribution over precision
     precision = 1.0 / sigma^2
     precision <- precision[!is.na(precision)]
-    precision <- precision[ precision < quantile(precision, probs = 0.8)]
+    precision <- precision[ precision < quantile(precision, probs = 0.95)]
     a_rate  <- stest$fit_gamma(precision)
     ret$d0 <- d0  <-  2 * a_rate$a
     ret$s0_2 <- s0_2  <-  a_rate$rate / a_rate$a
@@ -58,10 +58,12 @@ stest$ms_intensity_data <- function(dat, d.log2 = NULL, pdffile = "_stest.pdf") 
     x <- seq(1e-6, 10, length.out = 1000)
 
     pxa <- exp(d0/2*log(s0_2*d0/2) - lgamma(d0/2) + (-s0_2*d0/2 / x) - (1+d0/2)*log(x))
+    #pxa2 <- exp(0.5*d0/2*log(s0_2*0.5*d0/2) - lgamma(0.5*d0/2) + (-s0_2*0.5*d0/2 / x) - (1+0.5*d0/2)*log(x))
 
     h <- hist(sigma^2, 40, freq = FALSE, ylim = c(0, 2))
     #lines(x, px, col = "red")
     lines(x, pxa, col = "green")
+    #lines(x, pxa2, col = "orange")
 
     # plot estimated variances
     m <- apply(ret$d.log2, 1, mean, na.rm = TRUE)
@@ -86,7 +88,7 @@ stest$ms_intensity_data <- function(dat, d.log2 = NULL, pdffile = "_stest.pdf") 
     return(ret)
 }
 
-stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL, id = NULL, n.threads = 1) {
+stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL, id = NULL, n.threads = 1, index = 1:nrow(d.log2)) {
 
     # s2 and cv will overwrite estimation in sdata
 
@@ -119,12 +121,12 @@ stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL
         }
     }
 
-    pval <- rep(1, nrow(d))
-    log_fc <- rep(1, nrow(d))
+    pval <- rep(1, length(index))
+    log_fc <- rep(1, length(index))
 
     #-- single thread or multiple threads
     if (n.threads == 1) {
-        for (i in 1:nrow(d)) {
+        for (i in index) {
             y  <- as.numeric(d[i,])
             if (is.null(id)) {
                 out <- stest$ms_intensity_vector(y, X, tech_var, sdata$technical_variation$ab, sdata$imputation$m, sdata$imputation$s2,
@@ -146,7 +148,7 @@ stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL
         cl <- makeCluster(nt)
         clusterExport(cl=cl, varlist=c("stest"))
 
-        outer <- parLapply(cl, as.list(1:nrow(d)), function(i) {
+        outer <- parLapply(cl, as.list(index), function(i) {
             y  <- as.numeric(d[i,])
 
             if (is.null(id)) {
@@ -160,7 +162,7 @@ stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL
         })
         stopCluster(cl)
 
-        for (i in 1:nrow(d)) {
+        for (i in 1:length(index)) {
             pval[i] <- outer[[i]]$pval
             log_fc[i] <- outer[[i]]$beta[2]
         }
@@ -191,10 +193,12 @@ stest$ms_intensity_vector <- function(y, X, techvar2, ab, null_mu, null_sigma2, 
         return(list(pval = 1, beta = rep(0, ncol(X))))
     }
 
-    para1 <- stest$update_chisquare(y, X, d0, s0_2)
+    para1 <- stest$update_chisquare(y, X, d0, s0_2, na_v = null_mu)
+    #para1 <- stest$update_chisquare(y, X, d0, s0_2)
     para2 <- stest$update_chisquare(y, X_restricted, d0, s0_2)
 
-    s2_hat <- (para1$d*para1$s2 + para2$d*para2$s2) / (para1$d + para2$d)
+    #s2_hat <- (para1$d*para1$s2 + para2$d*para2$s2) / (para1$d + para2$d)
+    s2_hat <- para1$s2
 
     # ----- simulate
     Lw <- NULL
@@ -227,6 +231,81 @@ stest$ms_intensity_vector <- function(y, X, techvar2, ab, null_mu, null_sigma2, 
 
     return(list(pval = pval, beta = uLogL$beta))
 }
+
+stest$max_LL <- function(Lw, U, X, y, s2) {
+    
+    
+    maxT <- 1e4
+    f_tol <- 1e-8
+    beta_tol <- 1e-8
+    
+    
+    M <- nrow(U)
+    K <- ncol(U)
+    
+    A  <- solve(X %*% t(X), X)
+    
+    yy  <-  y
+    yy[is.na(y)]  <-  mean(y[!is.na(y)]) # for starting values
+    
+    beta  <-  A %*% as.matrix(yy)
+    
+    xbeta  <-  t(t(X) %*% beta)
+    
+    L  <-  -Inf;
+    
+    
+    for (t in 1:maxT) {
+        
+        #matplot(t(U), pch=16)
+        #cat(t, " -> ", L, "\n")
+        #if (readline() == 'q') stop()
+        
+        
+        old_L  <-  L
+        old_beta  <-  beta
+        
+        R  <- U - matrix(xbeta, nrow = M, ncol = length(xbeta), byrow = TRUE)
+        R2  <- R * R
+        
+        H_mk  <-  Lw - 0.5 * log(2 * pi * s2) - R2 / (2 * s2);
+        
+        Lk  <-  stest$lse(H_mk)
+        
+        L  <-  sum(Lk)
+        
+        W_mk  <- exp(H_mk - matrix(Lk, nrow = M, ncol = length(Lk), byrow = TRUE))
+        
+        
+        #matplot(t(U), pch='.')
+        #print(colSums(W_mk))
+        #symbols(rep(1:K, M), as.vector(t(U)), circles = as.vector(t(W_mk)), inches=0.05, bg="seagreen")
+        #cat(t, " -> ", L, "\n")
+        #if (readline() == 'q') stop()
+        
+        v  <- colSums(U * W_mk)
+        
+        beta  <- A %*% as.matrix(v)
+        xbeta  <- t(t(X) %*% beta)
+        
+        if (max(abs(old_L - L)) < f_tol && max(abs(old_beta - beta)) < beta_tol) {
+            break;
+        }
+        
+    }
+    
+    R  <- U - matrix(xbeta, nrow = M, ncol = length(xbeta), byrow = TRUE)
+    R2  <- R * R
+    
+    H_mk  <-  Lw - 0.5 * log(2 * pi * s2) - R2 / (2 * s2);
+    
+    Lk  <-  stest$lse(H_mk)
+    
+    L  <-  sum(Lk)
+    
+    list(L = L, beta = beta)
+}
+
 
 stest$plot_mle <- function(y, techvar2, ab, null_mu, null_sigma2, d0, s0_2) {
 
@@ -277,6 +356,10 @@ stest$update_chisquare <- function(y, X, d0, s0_2, na_v = NULL) {
     fit <- stest$estimate_chisquare(y, X, na_v)
 
     if (fit$d0 > 1) {
+        #print(y)
+        #print(fit$d0)
+        #if (readline() == 'q') stop("bye")
+        
         return(list(d = d0 + fit$d0, s2 = (d0 * s0_2 + fit$s2 * fit$d0)/(d0 + fit$d0)))
     } else {
         return(list(d = d0, s2 = s0_2))
@@ -284,64 +367,6 @@ stest$update_chisquare <- function(y, X, d0, s0_2, na_v = NULL) {
 }
 
 
-stest$max_LL <- function(Lw, U, X, y, s2) {
-
-    maxT <- 1e4;
-    f_tol <- 1e-8;
-    beta_tol <- 1e-8;
-
-    M <- nrow(U)
-    K <- ncol(U)
-
-    A  <- solve(X %*% t(X), X)
-
-    yy  <-  y
-    yy[is.na(y)]  <-  mean(y[!is.na(y)]) # for starting values
-
-    beta  <-  A %*% as.matrix(yy)
-
-    xbeta  <-  t(t(X) %*% beta)
-
-    L  <-  -Inf;
-
-    for (t in 1:maxT) {
-
-        old_L  <-  L
-        old_beta  <-  beta
-
-        R  <- U - matrix(xbeta, nrow = M, ncol = length(xbeta), byrow = TRUE)
-        R2  <- R * R
-
-        H_mk  <-  Lw - 0.5 * log(2 * pi * s2) - R2 / (2 * s2);
-
-        Lk  <-  stest$lse(H_mk)
-
-        L  <-  sum(Lk)
-
-        W_mk  <- exp(H_mk - matrix(Lk, nrow = M, ncol = length(Lk), byrow = TRUE))
-
-        v  <- colSums(U * W_mk)
-
-        beta  <- A %*% as.matrix(v)
-        xbeta  <- t(t(X) %*% beta)
-
-        if (max(abs(old_L - L)) < f_tol && max(abs(old_beta - beta)) < beta_tol) {
-            break;
-        }
-
-    }
-
-    R  <- U - matrix(xbeta, nrow = M, ncol = length(xbeta), byrow = TRUE)
-    R2  <- R * R
-
-    H_mk  <-  Lw - 0.5 * log(2 * pi * s2) - R2 / (2 * s2);
-
-    Lk  <-  stest$lse(H_mk)
-
-    L  <-  sum(Lk)
-
-    list(L = L, beta = beta)
-}
 
 
 stest$estimate_chisquare <- function(y, X, na_v = NULL) {
@@ -359,15 +384,36 @@ stest$estimate_chisquare <- function(y, X, na_v = NULL) {
             out <- lm.fit(XX, yy)
 
             d0 <- out$df.residual
+            
+            #print(yy)
+            #print(out)
             if (d0 > 0) {
                 s2 <- mean(out$effects[-(1:out$rank)]^2)
             }
         }
     } else {
-        d0 <- length(y)-1
+        #d0 <- length(y)-1
+        #yy <- y
+        #yy[is.na(y)] <- na_v
+        #s2 <- var(yy)
+        
         yy <- y
         yy[is.na(y)] <- na_v
-        s2 <- var(yy)
+        
+        
+        XX <- X
+
+            
+        out <- lm.fit(XX, yy)
+            
+        d0 <- out$df.residual
+            
+            #print(yy)
+            #print(out)
+        if (d0 > 0) {
+            s2 <- mean(out$effects[-(1:out$rank)]^2)
+        }
+    
     }
     return(list(d0 = d0, s2 = s2))
 }
@@ -381,7 +427,7 @@ stest$fit_gamma <- function(x) { # x = precision
     for (i in 1:1000) {
         old_a <- a
         a <- 1.0 / (1.0/a + (tmp + log(a) - digamma(a))/(a*a*(1/a-trigamma(a))))
-        if (abs(a-old_a) < 1e-10) {
+        if (abs(a-old_a) < 1e-10 && i > 100) {
             break
         }
     }
@@ -452,15 +498,15 @@ stest$estimate_cv <- function(dat, draw = FALSE) {
         x <- x[!is.na(x)]
         if (length(x) > 0 && sum(x > 1e-8) > thres) {
             x <- x[x > 1e-8]
-            m <- c(m, mean(x));
+            m <- c(m, mean(x))
             n <- length(x)
-            s <- c(s, sqrt((n - 1) * var(x)/n));
+            s <- c(s, sqrt((n - 1) * var(x)/n))
         }
     }
-    cc <- median(s / m);
+    cc <- median(s / m)
 
     # robust estimation
-    cc_robust <- quantile(s / m, 0.25);
+    cc_robust <- as.numeric(quantile(s / m, 0.25))
 
     if (draw) {
         plot(log2(m), log2(s), pch = 20, col = "gray", main = "mean variation plot", xlab = "log2 mean", ylab = "log2 standard deviation",
@@ -523,6 +569,9 @@ stest$estimate_ab <- function(dat, draw = FALSE) {
     max_y <- -Inf
     min_y <- Inf
 
+
+    cc <- 0
+
     for (i in 1:ncol(dd)) {
 
         n1 <- hist(m[is.na(dd[, i])], breaks = x, plot = FALSE)
@@ -531,27 +580,37 @@ stest$estimate_ab <- function(dat, draw = FALSE) {
 
         ok  <- (ratios < 1) & (ratios > 0) & !is.na(ratios)
 
-        p <- lsfit(x = n$mids[ok], y =  log(ratios[ok] / (1 - ratios[ok])))
+        if (sum(ok) == 0) {
+            cat(i, ": no missing data, perhaps this is not the best test\n")
+        } else {
 
-        aa <- c(aa, p$coefficients[2])
-        bb <- c(bb, p$coefficients[1])
+            p <- lsfit(x = n$mids[ok], y =  log(ratios[ok] / (1 - ratios[ok])))
 
-        to_plots[[i]] <- list(x = n$mids[ok], y =  log(ratios[ok] / (1 - ratios[ok])))
-        max_y <- max(max_y, max(to_plots[[i]]$y))
-        min_y <- min(min_y, min(to_plots[[i]]$y))
+            aa <- c(aa, p$coefficients[2])
+            bb <- c(bb, p$coefficients[1])
+
+            cc <- cc + 1
+            to_plots[[cc]] <- list(x = n$mids[ok], y =  log(ratios[ok] / (1 - ratios[ok])))
+            max_y <- max(max_y, max(to_plots[[i]]$y))
+            min_y <- min(min_y, min(to_plots[[i]]$y))
+        }
+
     }
 
+    if (cc == 0) {
+        return(list(a = 0, b = 0))
+    }
 
     # for plot
     xx <- seq(from = (min(m, na.rm  = TRUE)-1), to = (max(m, na.rm  = TRUE)+1), length.out = 1000)
     if (draw) {
         plot(NULL, xlim=c(min(xx), max(xx)), ylim=c(min_y - 0.1, max_y + 0.1), ylab="logistics transformed of misdetection rate", xlab="log2 mean")
-        for (i in 1:ncol(dd)) {
+        for (i in 1:cc) {
             points(to_plots[[i]]$x, to_plots[[i]]$y, type = 'l', col = palette()[i %% 8 + 1])
         }
 
         plot(NULL, xlim=c(min(xx), max(xx)), ylim=c(0, 1), ylab="phi_u", xlab="log2 mean")
-        for (i in 1:ncol(dd)) {
+        for (i in 1:cc) {
             tmp <- exp(xx * aa[i] + bb[i]);
             points(xx, tmp/(1.0+tmp), type = 'l', col = palette()[i %% 8 + 1], lty = 3, lwd = 2)
         }
