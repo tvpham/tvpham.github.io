@@ -1,0 +1,14 @@
+body{font-size:16px;line-height:1.6;}
+.box {font-size:18px; float: left;margin: 1em;}
+code {font-family: monospace;color:firebrick;}
+.flex-container {display: flex;width: 100%;background-color: white;flex-direction: column;}
+.mainrow {border-top: 1.5px solid black; padding: 0px;display: -webkit-flex;display: flex;flex-wrap: wrap;background-color: white;}
+.content {text-align: left;padding: 1px 1px;margin-right: 25px;width: 800px;}
+footer {background: white;color:black; text-align: left; border-top: 1px solid black; padding: 10px}
+header {background: white;color:black; text-align: left; padding: 0px; font-size: 150%; font-weight:bold; margin: 0px; display:flex; align-items: center}
+@media screen and (max-width: 40em) {
+    .content {width: 100%;}
+    header {  flex-direction: column; }
+    .box{fnt-size: 4.4vw;}
+}
+
