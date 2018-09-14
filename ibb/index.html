@@ -1,0 +1,326 @@
+<html>
+<head>
+<title>Statistical analysis of count data</title>
+<meta charset="utf-8">
+<style type="text/css">
+text {font-family:verdana;font-size:14px}
+</style>
+
+</head>
+
+<body>
+<h1>	
+	R: The ibb package for count data
+	</h1>
+	<p>
+	Recent technology platforms in proteomics and genomics produce count data for quantitative analysis. In proteomics, the number of MS/MS events observed for a protein in the mass spectrometer has been shown to correlate strongly with the protein's abundance in a complex mixture. In genomics, next-generation sequencing technologies use read count as a reliable measure of the abundance of the target transcript. This R package contains two functions for statistical analysis of count data. 
+		</p>
+<ul>
+	<li>The beta-binomial test (<a href="#bb.test">bb.test</a>) can be used for significance analysis of independent samples (two or more groups).</li>
+<li>The inverted beta-binomial test (<a href="#ibb.test">ibb.test</a>) can be used for paired sample testing (e.g. pre-treatment and post-treatment data).</li>
+</ul>
+
+<p>
+<a href="https://tvpham.github.io/ibb/ibb-manual.pdf">User manual</a> | <a href="https://tvpham.github.io/ibb/examples.zip">Example data and R scripts</a>
+</p>
+
+	 
+<br>
+
+INSTALLATION
+<br>
+============
+<br>
+
+
+<p>
+
+<p>
+For latest R (from 3.5.0)
+<br>
+<a href="https://tvpham.github.io/ibb/ibb_18.09.zip">Windows (both 32 bit & 64 bit)</a>
+| <a href="https://tvpham.github.io/ibb/ibb_18.09.tgz">MacOS (64 bit)</a>
+| <a href="https://tvpham.github.io/ibb/ibb_18.09-x64.tar.gz">Linux 64 bit</a>
+</p>
+
+For 3.0.0 &lt;= R &lt;= 3.4.4
+<br>
+<a href="https://tvpham.github.io/ibb/ibb_13.06.zip">Windows (both 32 bit & 64 bit)</a>
+| <a href="https://tvpham.github.io/ibb/ibb_13.06.tgz">MacOS (64 bit)</a>
+| <a href="https://tvpham.github.io/ibb/ibb_13.06_R_i686-pc-linux-gnu.tar.gz">Linux 32 bit</a>
+| <a href="https://tvpham.github.io/ibb/ibb_13.06_R_x86_64-unknown-linux-gnu.tar.gz">Linux 64 bit</a>
+</p>
+
+For R &lt; 3.0.0
+<br>
+<a href="https://tvpham.github.io/ibb/ibb_12.12.12.zip">Windows (both 32 bit & 64 bit)</a>
+| <a href="https://tvpham.github.io/ibb/ibb_12.12.12.tgz">MacOS (both 32 bit & 64 bit)</a>
+| <a href="https://tvpham.github.io/ibb/ibb_12.12.12_Linux32.tar.gz">Linux 32 bit</a>
+| <a href="https://tvpham.github.io/ibb/ibb_12.12.12_Linux64.tar.gz">Linux 64 bit</a>
+</p>
+
+
+<br>
+
+<p> On Windows, go to R menu "Packages" --&gt; "Install package(s) from local zip files", and then select the downloaded zip file.
+</p>
+<p> On Linux and MacOS, use the shell command: R CMD INSTALL &lt;the downloaded file&gt;
+</p>
+
+<br>
+
+<p>
+All rights reserved by the author. This software package is provided for research purposes in a non-commercial environment. Please do not redistribute.
+</p>
+<p>
+Contact: Thang V Pham &lt;<a href="mailto:t.pham@vumc.nl">t.pham@vumc.nl</a>&gt;
+</p>
+<br>
+
+<hr>
+
+<h2>
+<a id="bb.test">The beta-binomial test</a>
+</h2>
+
+<h3>Description</h3>
+
+
+<p>Performs the beta-binomial test for count data.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+bb.test(x, tx, group, alternative = c("two.sided", "less", "greater"), n.threads = 1)
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table cellspacing="10">
+<tr valign="top"><td><i>x</i></td>
+<td>
+
+<p>A vector or matrix of counts. When <i>x</i> a matrix, the test is performed row by row.
+</p>
+</td></tr>
+<tr valign="top"><td><i>tx</i></td>
+<td>
+
+<p>A vector or matrix of the total sample counts. When <i>tx</i> is a matrix, the number of rows must be equal to the number of rows of <i>x</i>.
+</p>
+</td></tr>
+<tr valign="top"><td><i>group</i></td>
+<td>
+
+<p>A vector of group indicators.
+</p>
+</td></tr>
+<tr valign="top"><td><i>alternative</i></td>
+<td>
+
+<p>A character string specifying the alternative hypothesis: &quot;two.sided&quot; (default), &quot;greater&quot; or &quot;less&quot;.
+</p>
+</td></tr>
+<tr valign="top"><td><i>n.threads</i></td>
+<td>
+
+<p>The number of threads to be used.
+</p>
+</td></tr>
+</table>
+
+<h3>Details</h3>
+
+
+<p>When <i>n.threads</i> is 0, the maximal number of CPU cores is used. When <i>n.threads</i> is -1, one CPU core less than the maximum is used, and so on.
+</p>
+
+
+<h3>Value</h3>
+
+
+<p>A list with a single component is returned
+</p>
+<table cellspacing="10">
+<tr valign="top"><td><i>p.value </i></td>
+<td>
+<p>The p-value of the test.</p>
+</td></tr>
+</table>
+
+
+<h3>Author</h3>
+
+
+<p>Thang V. Pham &lt;<a href="mailto:t.pham@vumc.nl">t.pham@vumc.nl</a>&gt;
+</p>
+
+
+<h3>Reference</h3>
+
+
+<p>Pham TV, Piersma SR, Warmoes M, Jimenez CR (2010) <a href="http://bioinformatics.oxfordjournals.org/content/26/3/363.long">On the beta binomial model for analysis of spectral count data in label-free tandem mass spectrometry-based proteomics</a>. Bioinformatics, 26(3):363-369.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+# example proteomics spectral count data
+
+x &lt;- c(1, 5, 1, 10, 9, 11, 2, 8)
+tx &lt;- c(19609, 19053, 19235, 19374, 18868, 19018, 18844, 19271)
+group &lt;- c(rep("cancer", 3), rep("normal", 5))
+bb.test(x, tx, group)
+
+######################
+
+# comparing 3 groups: columns c(1, 2, 3), c(4, 5, 6), and c(7, 8) of a data file
+
+d &lt;- read.delim("example-3groups.txt", header = TRUE)
+
+# compare 3 groups, using all available CPU cores
+
+out &lt;- bb.test(d[, 1:8], colSums(d[, 1:8]), c(rep("a", 3), rep("b", 3), rep("c", 2)), n.threads = 0)
+
+# write result to file
+
+write.table(cbind(d, out$p.value), file = "example-3groups-out.txt", sep = "\t", row.names = FALSE)
+
+</pre>
+
+<hr>
+
+<h2>
+	<a id="ibb.test">The inverted beta-binomial test</a>
+</h2>
+
+<h3>Description</h3>
+
+
+<p>Performs the inverted beta-binomial test for paired count data.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+ibb.test(x, tx, group, alternative = c("two.sided", "less", "greater"), n.threads = 1)
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table cellspacing="10">
+<tr valign="top"><td><i>x</i></td>
+<td>
+
+<p>A vector or matrix of counts. When <i>x</i> is a matrix, the test is performed row by row.
+</p>
+</td></tr>
+<tr valign="top"><td><i>tx</i></td>
+<td>
+
+<p>A vector or matrix of the total sample counts. When <i>tx</i> is a matrix, the number of rows must be equal to the number of rows of <i>x</i>.
+</p>
+</td></tr>
+<tr valign="top"><td><i>group</i></td>
+<td>
+
+<p>A vector of group indicators. There should be two groups of equal size. The samples are matched by the order of appearance in each group.
+</p>
+</td></tr>
+<tr valign="top"><td><i>alternative</i></td>
+<td>
+
+<p>A character string specifying the alternative hypothesis: &quot;two.sided&quot; (default), &quot;greater&quot; or &quot;less&quot;.
+</p>
+</td></tr>
+<tr valign="top"><td><i>n.threads</i></td>
+<td>
+
+<p>The number of threads to be used. 
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+
+<p>This test is designed for paired count data, for example data acquired before and after treatment.
+</p>
+
+
+<h3>Value</h3>
+
+
+<p>A list of values is returned
+</p>
+<table cellspacing="10">
+<tr valign="top"><td><i>p.value </i></td>
+<td>
+<p>The p-value of the test.</p>
+</td></tr>
+<tr valign="top"><td><i>fc </i></td>
+<td>
+<p>An estimation of the common fold change.</p>
+</td></tr>
+</table>
+
+
+<h3>Author</h3>
+
+
+<p>Thang V. Pham &lt;<a href="mailto:t.pham@vumc.nl">t.pham@vumc.nl</a> &gt;
+</p>
+
+
+<h3>Reference</h3>
+
+
+<p>Pham TV, Jimenez CR (2012) <a href="http://bioinformatics.oxfordjournals.org/content/28/18/i596.full">An accurate paired sample test for count data</a>. Bioinformatics, 28(18):i596-i602.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# example RNA-seq read count data
+
+x &lt;- c(33, 32, 86, 51, 52, 149)
+tx &lt;- c(7742608, 15581382, 20933491, 7126839, 13842297, 14760103)
+group &lt;- c(rep("cancer", 3), rep("normal", 3))
+ibb.test(x, tx, group)
+
+######################
+
+# columns c(1, 2, 3) are respectively paired with columns c(4, 5, 6)
+
+d &lt;- read.delim("example-paired.txt", header = TRUE)
+
+# perform a paired test for all rows, using all but one CPU cores
+
+out &lt;- ibb.test(d[, 1:6], colSums(d[, 1:6]), c(rep("pre", 3), rep("post", 3)), n.threads = -1)
+
+# write result to file
+
+write.table(cbind(d, out$fc, out$p.value), file = "example-paired-out.txt", sep = "\t", row.names = FALSE)
+
+</pre>
+
+
+<hr>
+
+<br>
+Last updated 2018, Thang Pham
+
+
+</body>
+</html>
