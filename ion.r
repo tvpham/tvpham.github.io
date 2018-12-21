@@ -14,9 +14,10 @@ ion <- list()
 
 # normalization
 
-ion$normalize_global <- function(d) {
+ion$normalize_global <- function(d, total_count = NULL) {
 
-    total <- apply(d, 2, sum)
+    total <- ifelse(is.null(total_count), apply(d, 2, sum), total_count)
+
     m <- mean(total)
     factor <- total / m;
 
@@ -338,7 +339,7 @@ ion$beta_binomial_2g <- function(dat, group1, group2, total_count = NULL) {
                    c(rep("a", length(group1)), rep("b", length(group2))),
                    n.threads = -1)
 
-    d.norm <- ion$normalize_global(d)
+    d.norm <- ion$normalize_global(d, total_count)
 
     return (list(fc = ion$fold_change(d.norm[, group1], d.norm[, group2]),
                  pval = out$p.value,
