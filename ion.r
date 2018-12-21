@@ -16,7 +16,7 @@ ion <- list()
 
 ion$normalize_global <- function(d, total_count = NULL) {
 
-    total <- ifelse(is.null(total_count), apply(d, 2, sum), total_count)
+    total <- if (is.null(total_count)) apply(d, 2, sum) else total_count
 
     m <- mean(total)
     factor <- total / m;
@@ -335,7 +335,7 @@ ion$beta_binomial_2g <- function(dat, group1, group2, total_count = NULL) {
     d <- dat[, c(group1, group2)]
 
     out <- bb.test(d,
-                   ifelse(is.null(total_count), colSums(d), total_count),
+                   if (is.null(total_count)) colSums(d) else total_count,
                    c(rep("a", length(group1)), rep("b", length(group2))),
                    n.threads = -1)
 
@@ -353,7 +353,7 @@ ion$beta_binomial_2g_paired <- function(dat, group1, group2, total_count = NULL,
     d <- dat[, c(group1, group2)]
 
     out <- ibb.test(d,
-                    ifelse(is.null(total_count), colSums(d), total_count),
+                    if (is.null(total_count)) colSums(d) else total_count,
                     c(rep("a", length(group1)), rep("b", length(group2))),
                     n.threads = -1)
 
@@ -378,7 +378,7 @@ ion$beta_binomial_3g <- function(dat, group1, group2, group3, total_count = NULL
     d <- dat[, c(group1, group2, group3)]
 
     out <- bb.test(d,
-                  ifelse(is.null(total_count), colSums(d), total_count),
+                  if (is.null(total_count)) colSums(d) else total_count,
                   c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3))),
                   n.threads = -1)
 
@@ -393,7 +393,7 @@ ion$beta_binomial_4g <- function(dat, group1, group2, group3, group4, total_coun
     d <- dat[, c(group1, group2, group3, group4)]
 
     out <- bb.test(d,
-                   ifelse(is.null(total_count), colSums(d), total_count),
+                   if (is.null(total_count)) colSums(d) else total_count,
                    c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3)), rep("d", length(group4))),
                    n.threads = -1)
 
@@ -485,8 +485,8 @@ ion$heatmap <- function(d_heatmap,
                        main = NULL,
                        cexCol = 1,
                        cexRow = 1,
-                       lwid = NULL, # c(1, ifelse(ncol(d_heatmap) > 60, 8, 4)),
-                       lhei = NULL, # c(1, ifelse(nrow(d_heatmap) > 30, 5, 3)),
+                       lwid = NULL,
+                       lhei = NULL,
                        key = TRUE ) {
 
     if (!is.null(col_data)) {
