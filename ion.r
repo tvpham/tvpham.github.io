@@ -5,8 +5,6 @@
 # This code contains a modified version of the heatmap.2 function
 # in the R gplots package (version 3.0.1)
 #
-# Bug report at https://github.com/tvpham/ion/issues
-#
 # Copyright Thang Pham, 2018
 
 
@@ -34,7 +32,7 @@ ion$row_ok <- function(d) {
     return(rowSums(is.na(d)) < ncol(d))
 }
 
-ion$dev.off <- function() {
+ion$dev_off <- function() {
     while (dev.off()>1) {}
 }
 
@@ -65,19 +63,21 @@ ion$impute <- function(d, method = "constant", value = 0, seed = 1203) {
     }
 }
 
-ion$load <- function(filename
-                    # a tab-deliminated text file with a header line
-                    ) {
-    return(read.delim(filename, header = TRUE, quote = ""))
+ion$load <- function(filename,
+                     # a tab-deliminated text file with a header line
+                     ...
+                     ) {
+    return(read.delim(filename, quote = "", ...))
 }
 
 ion$save <- function(d,
                     # a data table
 
-                    filename
+                    filename,
                     # e.g. "output.txt", "d.txt"
+                    ...
                     ) {
-    write.table(d, file = filename, sep = '\t', row.names = FALSE, quote = FALSE, qmethod = "double")
+    write.table(d, file = filename, sep = "\t", row.names = FALSE, quote = FALSE, qmethod = "double", ...)
 }
 
 # Statistical testing
@@ -235,7 +235,7 @@ ion$limma_3g <- function(dat, group1, group2, group3) {
 
 ## t-test
 
-ion$t.test <- function(dat, group1, group2, paired = FALSE) {
+ion$t_test <- function(dat, group1, group2, paired = FALSE) {
 
     if (paired) {
         if (length(group1) != length(group2)) {
@@ -327,13 +327,14 @@ ion$fold_change <- function(c1, c2, BIG = 1e4) {
     return(val)
 }
 
-ion$beta_binomial_2g <- function(dat, group1, group2) {
+ion$beta_binomial_2g <- function(dat, group1, group2, total_count = NULL) {
 
     require(ibb)
 
     d <- dat[, c(group1, group2)]
 
-    out <- bb.test(d, colSums(d),
+    out <- bb.test(d,
+                   ifelse(is.null(total_count), colSums(d), total_count),
                    c(rep("a", length(group1)), rep("b", length(group2))),
                    n.threads = -1)
 
@@ -344,13 +345,14 @@ ion$beta_binomial_2g <- function(dat, group1, group2) {
                  pval.BH = p.adjust(out$p.value, method = "BH")))
 }
 
-ion$beta_binomial_2g_paired <- function(dat, group1, group2, BIG = 1e4) {
+ion$beta_binomial_2g_paired <- function(dat, group1, group2, total_count = NULL, BIG = 1e4) {
 
     require(ibb)
 
     d <- dat[, c(group1, group2)]
 
-    out <- ibb.test(d, colSums(d),
+    out <- ibb.test(d,
+                    ifelse(is.null(total_count), colSums(d), total_count),
                     c(rep("a", length(group1)), rep("b", length(group2))),
                     n.threads = -1)
 
@@ -368,27 +370,29 @@ ion$beta_binomial_2g_paired <- function(dat, group1, group2, BIG = 1e4) {
                  pval.BH = p.adjust(out$p.value, method = "BH")))
 }
 
-ion$beta_binomial_3g <- function(dat, group1, group2, group3) {
+ion$beta_binomial_3g <- function(dat, group1, group2, group3, total_count = NULL) {
 
     require(ibb)
 
     d <- dat[, c(group1, group2, group3)]
 
-    out <- bb.test(d, colSums(d),
-                   c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3))),
-                   n.threads = -1)
+    out <- bb.test(d,
+                  ifelse(is.null(total_count), colSums(d), total_count),
+                  c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3))),
+                  n.threads = -1)
 
     return (list(pval = out$p.value,
                  pval.BH = p.adjust(out$p.value, method = "BH")))
 }
 
-ion$beta_binomial_4g <- function(dat, group1, group2, group3, group4) {
+ion$beta_binomial_4g <- function(dat, group1, group2, group3, group4, total_count = NULL) {
 
     require(ibb)
 
     d <- dat[, c(group1, group2, group3, group4)]
 
-    out <- bb.test(d, colSums(d),
+    out <- bb.test(d,
+                   ifelse(is.null(total_count), colSums(d), total_count),
                    c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3)), rep("d", length(group4))),
                    n.threads = -1)
 
