@@ -1,14 +1,13 @@
-# header ----
-
-# Author: Thang Pham
+# Author: Thang V Pham
 #
 # This code contains a modified version of the heatmap.2 function
 # in the R gplots package (version 3.0.1)
 #
-# Copyright Thang Pham, 2018
+# Copyright Thang Pham, 2018-2019
 
 
 # NOTE: sourcing this will replace any existing 'ion' object
+
 ion <- list()
 
 
@@ -26,6 +25,15 @@ ion$normalize_global <- function(d, total_count = NULL) {
     return(tmp)
 
 }
+
+ion$normalize_median <- function(d_log, fixed_median = NULL) {
+
+    m <- apply(d_log, 2, median, na.rm=TRUE)
+    f <- if (is.null(fixed_median)) (mean(m)-m) else (fixed_median-m)
+    return(d_log + matrix(1, nrow = nrow(d_log), ncol = 1) %*% as.numeric(f))
+
+}
+
 
 # Utils
 
@@ -52,10 +60,10 @@ ion$impute <- function(d, method = "constant", value = 0, seed = 1203) {
         } else if (method == "normal") {
 
             set.seed(seed)
-            global_mean <- min(d, na.rm=TRUE)
+            global_min <- min(d, na.rm=TRUE)
             global_sd <- mean(apply(d, 1, sd, na.rm = TRUE), na.rm = TRUE)
             dd[is.na(dd)] <- rnorm(n,
-                                   mean = global_mean,
+                                   mean = global_min,
                                    sd = global_sd)
         } else {
             stop("Unknown imputation method.")
@@ -79,6 +87,14 @@ ion$save <- function(d,
                     ...
                     ) {
     write.table(d, file = filename, sep = "\t", row.names = FALSE, quote = FALSE, qmethod = "double", ...)
+}
+
+ion$boxplot_column <- function(d, ...) {
+    dl <- list()
+    for (i in 1:ncol(d)) {
+        dl[i] <- list(d[!is.na(d[, i]), i])
+    }
+    boxplot(dl,...)
 }
 
 # Statistical testing
