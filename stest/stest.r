@@ -10,39 +10,44 @@
 # Simulated linear test applied to quantitative proteomics.
 # Bioinformatics. 2016 Sep 1; 32(17):i702-i709.
 #
-# Software version: 2.0
+# Software version: 2017
 #
 #######################################################################
 
 stest <- list()
 
-stest$ms_intensity_data <- function(dat, d.log2 = NULL, pdffile = "_stest.pdf", moderate_factor = 1.0, min_factor = 1.0) {
+stest$prepare <- function(dat, d_log2 = NULL, pdf_output = "_stest.pdf", moderate_factor = 1.0, min_factor = 1.0, ignore_missing_data = FALSE) {
 
-    # dat is the nonlog data for technical estimate. Provide d.log2 for the real data, if data for estimation of technical variation (a, b, cc) is different.
+    # dat is a non-log data for the technical estimation. Provide d_log2 for the real data, if data for estimation of technical variation (a, b, cc) is different.
 
-    pdf(pdffile, width = 7, height = 7)
+    pdf(pdf_output, width = 7, height = 7)
 
     ret <- list()
 
     # technical variation
     cc <- stest$estimate_cv(dat, draw = TRUE)
-    ab <- stest$estimate_ab(dat, draw = TRUE)
+
+    if (ignore_missing_data) {
+        ab <- NULL
+    } else {
+        ab <- stest$estimate_ab(dat, draw = TRUE)
+    }
 
     tvar <- log1p(cc$cc^2)
 
     ret$technical_variation <- list(s2 = tvar, ab = ab)
 
 
-    if (is.null(d.log2)) {
-        ret$d.log2 <- log2(dat)
-        ret$d.log2[ret$d.log2 == -Inf] <- NA
+    if (is.null(d_log2)) {
+        ret$d_log2 <- log2(dat)
+        ret$d_log2[ret$d_log2 == -Inf] <- NA
     } else {
-        ret$d.log2 <- d.log2
+        ret$d_log2 <- d_log2
     }
 
     # sd and degree of freedom
-    ret$n <- rowSums(!is.na(ret$d.log2))
-    sigma <- apply(ret$d.log2, 1, sd, na.rm = TRUE)
+    ret$n <- rowSums(!is.na(ret$d_log2))
+    sigma <- apply(ret$d_log2, 1, sd, na.rm = TRUE)
     ret$sn1 <- sigma * (ret$n-1)
 
 
@@ -66,11 +71,11 @@ stest$ms_intensity_data <- function(dat, d.log2 = NULL, pdffile = "_stest.pdf", 
     #lines(x, pxa2, col = "orange")
 
     # plot estimated variances
-    m <- apply(ret$d.log2, 1, mean, na.rm = TRUE)
+    m <- apply(ret$d_log2, 1, mean, na.rm = TRUE)
     plot(m, sigma^2, type = "p", col = "lightblue", pch = 16)
     var_post <- rep(NA, length(sigma))
     for (i in 1:length(var_post)) {
-        var_post[i] <- stest$update_chisquare(ret$d.log2[i,], matrix(1, nrow = ncol(ret$d.log2), ncol = 1), ret$d0, ret$s0_2)$s2
+        var_post[i] <- stest$update_chisquare(ret$d_log2[i,], matrix(1, nrow = ncol(ret$d_log2), ncol = 1), ret$d0, ret$s0_2)$s2
     }
     points(m, var_post, col = "red")
     legend("topright", legend = c("Empirical variance", "Squeezed variance"),
@@ -78,21 +83,20 @@ stest$ms_intensity_data <- function(dat, d.log2 = NULL, pdffile = "_stest.pdf", 
            col = c("lightblue", "red"))
 
 
-    # imputation
-    ret$imputation <- list(m = min_factor * min(ret$d.log2, na.rm = TRUE),
-                           s2 = mean(apply(ret$d.log2, 1, sd, na.rm = TRUE), na.rm = TRUE)^2)
-
+    # missing data model
+    ret$missing_data <- list(m = min_factor * min(ret$d_log2, na.rm = TRUE),
+                             s2 = mean(apply(ret$d_log2, 1, sd, na.rm = TRUE), na.rm = TRUE)^2)
 
     dev.off()
 
     return(ret)
 }
 
-stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL, id = NULL, n.threads = 1, index = 1:nrow(d.log2)) {
+stest$compare <- function(d_log2, group, sdata, s2 = NULL, cv = NULL, id = NULL, n.threads = 1, index = 1:nrow(d_log2)) {
 
     # s2 and cv will overwrite estimation in sdata
 
-    if (length(group) != ncol(d.log2)) {
+    if (length(group) != ncol(d_log2)) {
         stop("length of 'group' must be equal to ncol of matrix\n")
     }
 
@@ -101,7 +105,7 @@ stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL
     }
 
     # testing
-    d <- d.log2
+    d <- d_log2
 
     if (is.null(id)) {
         X <- model.matrix(~ factor(group))
@@ -129,10 +133,10 @@ stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL
         for (i in index) {
             y  <- as.numeric(d[i,])
             if (is.null(id)) {
-                out <- stest$ms_intensity_vector(y, X, tech_var, sdata$technical_variation$ab, sdata$imputation$m, sdata$imputation$s2,
+                out <- stest$ms_intensity_vector(y, X, tech_var, sdata$technical_variation$ab, sdata$missing_data$m, sdata$missing_data$s2,
                                                  sdata$d0, sdata$s0_2)
             } else {
-                out <- stest$ms_intensity_vector(y, X, tech_var, sdata$technical_variation$ab, sdata$imputation$m, sdata$imputation$s2,
+                out <- stest$ms_intensity_vector(y, X, tech_var, sdata$technical_variation$ab, sdata$missing_data$m, sdata$missing_data$s2,
                                                  sdata$d0, sdata$s0_2, X_restricted = X_restricted)
             }
             pval[i] <- out$pval
@@ -152,10 +156,10 @@ stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL
             y  <- as.numeric(d[i,])
 
             if (is.null(id)) {
-                out <- stest$ms_intensity_vector(y, X, tech_var, sdata$technical_variation$ab, sdata$imputation$m, sdata$imputation$s2,
+                out <- stest$ms_intensity_vector(y, X, tech_var, sdata$technical_variation$ab, sdata$missing_data$m, sdata$missing_data$s2,
                                                  sdata$d0, sdata$s0_2)
             } else {
-                out <- stest$ms_intensity_vector(y, X, tech_var, sdata$technical_variation$ab, sdata$imputation$m, sdata$imputation$s2,
+                out <- stest$ms_intensity_vector(y, X, tech_var, sdata$technical_variation$ab, sdata$missing_data$m, sdata$missing_data$s2,
                                                  sdata$d0, sdata$s0_2, X_restricted = X_restricted)
             }
             out
@@ -173,13 +177,13 @@ stest$ms_intensity_matrix <- function(d.log2, group, sdata, s2 = NULL, cv = NULL
     pval.BH[pval < 1] <- p.adjust(pval[pval < 1], method = "BH")
 
     if (length(levels(factor(group))) == 2) {
-        return (list(dd = d,
+        return (list(log2data = d,
                      log_fc = log_fc,
                      pval = pval,
                      pval.BH = pval.BH,
                      n_detected = rowSums(!is.na(d))))
     } else {
-        return (list(dd = d,
+        return (list(log2data = d,
                      pval = pval,
                      pval.BH = pval.BH,
                      n_detected = rowSums(!is.na(d))))
@@ -192,7 +196,7 @@ stest$ms_intensity_vector <- function(y, X, techvar2, ab, null_mu, null_sigma2, 
 
     if (all(is.na(y))) {
         return(list(pval = 1, beta = rep(0, ncol(X))))
-    } else if (is.na(null_mu)) {
+    } else if (is.na(null_mu) || is.null(ab)) {
         y_ok <- !is.na(y)
         y_new <- y[y_ok]
         X_new <- X[y_ok,, drop = FALSE]
@@ -206,12 +210,13 @@ stest$ms_intensity_vector <- function(y, X, techvar2, ab, null_mu, null_sigma2, 
     # TODO: for multiple row, this is common, thus can be further optimized, computationally.
     A <- stest$check_M(t(matrix(X_new, ncol = ncol(X_new))))
     A_restricted <- stest$check_M(t(matrix(X_restricted_new, ncol = ncol(X_restricted_new))))
-    
+
     if (is.na(A) || is.na(A_restricted)) {
         return(list(pval = 1, beta = rep(0, ncol(X_new))))
     }
-    
-    para1 <- stest$update_chisquare(y_new, X_new, d0, s0_2, na_v = null_mu)
+
+    para1 <- stest$update_chisquare(y_new, X_new, d0, s0_2, na_v = null_mu) # ignoring missing value leads to small variances!
+
     #para1 <- stest$update_chisquare(y, X, d0, s0_2)
     #para2 <- stest$update_chisquare(y, X_restricted, d0, s0_2)
 
@@ -261,79 +266,76 @@ stest$check_M <- function(M) {
 }
 
 stest$max_LL <- function(Lw, U, X, y, s2) {
-    
-    
+
+
     maxT <- 1e4
     f_tol <- 1e-8
     beta_tol <- 1e-8
-    
-    
+
+
     M <- nrow(U)
     K <- ncol(U)
-    
+
     A  <- solve(X %*% t(X), X)
-    
+
     yy  <-  y
     yy[is.na(y)]  <-  mean(y[!is.na(y)]) # for starting values
-    
+
     beta  <-  A %*% as.matrix(yy)
-    
+
     xbeta  <-  t(t(X) %*% beta)
-    
+
     L <- -Inf
-    
-    
+
+
     for (t in 1:maxT) {
-        
+
         #matplot(t(U), pch=16)
         #cat(t, " -> ", L, "\n")
         #if (readline() == 'q') stop()
-        
-        
+
         old_L  <-  L
         old_beta  <-  beta
-        
+
         R  <- U - matrix(xbeta, nrow = M, ncol = length(xbeta), byrow = TRUE)
         R2  <- R * R
-        
+
         H_mk  <-  Lw - 0.5 * log(2 * pi * s2) - R2 / (2 * s2)
-        
+
         Lk  <-  stest$lse(H_mk)
-        
+
         L  <-  sum(Lk)
-        
+
         W_mk  <- exp(H_mk - matrix(Lk, nrow = M, ncol = length(Lk), byrow = TRUE))
-        
-        
+
         #matplot(t(U), pch='.')
         #print(colSums(W_mk))
         #symbols(rep(1:K, M), as.vector(t(U)), circles = as.vector(t(W_mk)), inches=0.05, bg="seagreen")
         #cat(t, " -> ", L, "\n")
         #if (readline() == 'q') stop()
-        
+
         v  <- colSums(U * W_mk)
-        
+
         beta  <- A %*% as.matrix(v)
         xbeta  <- t(t(X) %*% beta)
-        
+
         if (max(abs(old_L - L)) < f_tol && max(abs(old_beta - beta)) < beta_tol) {
             break
         }
-        
+
     }
-    
+
     R  <- U - matrix(xbeta, nrow = M, ncol = length(xbeta), byrow = TRUE)
     R2  <- R * R
-    
+
     H_mk  <-  Lw - 0.5 * log(2 * pi * s2) - R2 / (2 * s2)
-    
+
     Lk  <-  stest$lse(H_mk)
-    
+
     L  <-  sum(Lk)
-    
+
     list(L = L, beta = beta)
 }
-
 
 stest$plot_mle <- function(y, techvar2, ab, null_mu, null_sigma2, d0, s0_2) {
 
@@ -390,7 +392,6 @@ stest$update_chisquare <- function(y, X, d0, s0_2, na_v = NA) {
     }
 }
 
-
 stest$estimate_chisquare <- function(y, X, na_v = NA) {
 
     s2 <- NA
@@ -406,7 +407,7 @@ stest$estimate_chisquare <- function(y, X, na_v = NA) {
             out <- lm.fit(XX, yy)
 
             d0 <- out$df.residual
-            
+
             if (d0 > 0) {
                 s2 <- mean(out$effects[-(1:out$rank)]^2)
             }
@@ -415,21 +416,20 @@ stest$estimate_chisquare <- function(y, X, na_v = NA) {
 
         yy <- y
         yy[is.na(y)] <- na_v
-        
+
         XX <- X
-            
+
         out <- lm.fit(XX, yy)
-            
+
         d0 <- out$df.residual
-            
+
         if (d0 > 0) {
             s2 <- mean(out$effects[-(1:out$rank)]^2)
         }
-    
+
     }
     return(list(d0 = d0, s2 = s2))
 }
-
 
 stest$fit_gamma <- function(x) { # x = precision
 
@@ -448,15 +448,19 @@ stest$fit_gamma <- function(x) { # x = precision
 
 }
 
-
 stest$log_pyu <- function(y, u, ab, sigma2_hat) {
 
-    phi <- exp(u * ab$a + ab$b)
-
-    if (!is.na(y)) {
-        ll <- -log(1.0 + phi) - log(sqrt(2.0 * pi * sigma2_hat)) - (y - u)*(y - u) / (2.0 * sigma2_hat)
+    if (is.null(ab)) {
+        # y cannot be NA here
+        ll <- -log(sqrt(2.0 * pi * sigma2_hat)) - (y - u)*(y - u) / (2.0 * sigma2_hat)
     } else {
-        ll <- log(phi / (1.0 + phi))
+        phi <- exp(u * ab$a + ab$b)
+
+        if (!is.na(y)) {
+            ll <- -log(1.0 + phi) - log(sqrt(2.0 * pi * sigma2_hat)) - (y - u)*(y - u) / (2.0 * sigma2_hat)
+        } else {
+            ll <- log(phi / (1.0 + phi))
+        }
     }
 
     return(ll)
@@ -486,16 +490,12 @@ stest$weighted_sampling_pyu <- function(y, ab, techvar2, mu, sigma2) {
         sigma2_hat <- sigma2
     }
 
-
     u  <-  z * sqrt(2) * sigma2_hat + mu_hat
 
     log_lambda <- log(sqrt(2) * sigma2_hat * wz) + stest$log_pyu(y, u, ab, sigma2_hat)
 
-    #log_lambda <- log(sqrt(2) * sigma2_hat * wz) + log_pyu_v2(mu_hat, u, ab, sigma2_hat); # effectively imputation
-
     list(log_lambda = log_lambda , u = u)
 }
-
 
 stest$estimate_cv <- function(dat, draw = FALSE) {
 
@@ -546,7 +546,6 @@ stest$estimate_cv <- function(dat, draw = FALSE) {
     list(cc = cc_robust, m = m, s = s)
 }
 
-
 stest$estimate_ab <- function(dat, draw = FALSE) {
 
     # dat = normalized, nonlog data
@@ -573,7 +572,6 @@ stest$estimate_ab <- function(dat, draw = FALSE) {
     n <- hist(m, breaks = x, plot = FALSE)
 
 
-
     aa <- NULL
     bb <- NULL
 
@@ -593,7 +591,7 @@ stest$estimate_ab <- function(dat, draw = FALSE) {
         ok  <- (ratios < 1) & (ratios > 0) & !is.na(ratios)
 
         if (sum(ok) == 0) {
-            cat(i, ": no missing data, perhaps this is not the best test\n")
+            cat(i, ": no missing data.\n")
         } else {
 
             p <- lsfit(x = n$mids[ok], y =  log(ratios[ok] / (1 - ratios[ok])))
@@ -641,7 +639,6 @@ stest$estimate_ab <- function(dat, draw = FALSE) {
     list( a = median(aa), b = median(bb))
 }
 
-
 stest$lse <- function(a) {
 
     #y = column max
@@ -651,79 +648,4 @@ stest$lse <- function(a) {
     a  <-  a - matrix(y, nrow = nrow(a), ncol = ncol(a), byrow = TRUE)
 
     return(y + log(colSums(exp(a))))
-
-}
-
-
-imputation_log2 <- function(log2_data){
-
-    ret <- list()
-    ret$original <- log2_data
-    ret$seed <- 1203
-
-    set.seed(ret$seed)
-
-    ret$normal_imputed_data <- log2_data
-
-    ret$halfmin_imputation <- ret$normal_imputed_data
-
-    ret$global_mean <- global_mean <- min(ret$normal_imputed_data, na.rm = TRUE)
-    ret$global_sd <- global_sd <- mean( apply(ret$normal_imputed_data, 1, sd, na.rm = TRUE), na.rm = TRUE)
-
-    ret$normal_imputed_data[is.na(ret$normal_imputed_data)] <- rnorm(length(ret$normal_imputed_data[is.na(ret$normal_imputed_data)]), mean = global_mean, sd = global_sd)
-
-    ret$halfmin_imputation[is.na(ret$halfmin_imputation)] <- 0.5 * global_mean
-
-    cat("global mean =", global_mean,"; sd = ", global_sd, "\n")
-    return(ret)
-}
-
-
-tp_limma_2g <- function(dat, group1, group2) {
-
-    require(limma)
-    require(Biobase)
-
-    N <- nrow(dat)
-
-
-    myeset <- ExpressionSet(assayData = as.matrix(dat)) # use all data
-
-    groups <- colnames(dat)
-    for (i in 1:length(groups)) {
-        if (groups[i] %in% group1) {
-            groups[i] <- "g1"
-        } else {
-            if (groups[i] %in% group2) {
-                groups[i] <- "g2"
-            } else {
-                groups[i] <- "other"
-            }
-        }
-    }
-
-    if (sum(groups == "other") == 0) {
-        groups <- factor(groups, levels = c("g1", "g2"))
-        design <- model.matrix(~ 0 + groups)
-        colnames(design) <- c("g1", "g2")
-    } else {
-        groups <- factor(groups, levels = c("g1", "g2", "other"))
-        design <- model.matrix(~ 0 + groups)
-        colnames(design) <- c("g1", "g2", "other")
-    }
-
-    contrast.matrix <- makeContrasts("g2-g1", levels = design)
-
-    fit <- lmFit(myeset, design)
-
-    fit2 <- contrasts.fit(fit, contrast.matrix)
-    fit2 <- eBayes(fit2)
-
-    a <- topTable(fit2, sort="none",n=Inf)
-
-    return (list(dd = dat[, c(group1,  group2)],
-                 logFC = a[, "logFC"],
-                 pval = a[, "P.Value"],
-                 pval.BH = a[, "adj.P.Val"],
-                 design = design))
 }
