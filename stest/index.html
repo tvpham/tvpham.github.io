@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>The s-test</title>
+<meta charset="utf-8">
+<style type="text/css">
+text {font-family:verdana;font-size:14px}
+code {color: firebrick;}
+</style>
+</head>
+
+<body>
+
+<h1>An R implementation of the s-test</h1>
+
+<p>This is an R implementation for the s-test for label-free mass spectrometry-based proteomics data presented in</p>
+<p>Pham TV, Jimenez CR. <a href="https://academic.oup.com/bioinformatics/article/32/17/i702/2450770">Simulated linear test applied to quantitative proteomics.</a><em>Bioinformatics</em>. 2016 Sep 1; 32(17):i702-i709.</p>
+<p>This implementation uses moderated variances as the Limma method (Smyth G.K., 2004, Linear models and empirical Bayes methods for assessing differential expression in microarray experiments. <em>Stat. Appl. Genet. Mol. Biol.</em> 3:3).</p>
+<p>The original MATLAB implementation is <a href="matlab/s_test.zip">here</a>, and an equivalent R implementation is <a href="matlab/stest.v0.R">here</a>.</p>
+
+<br>
+<h2>Quick start</h2>
+
+<p>The first step is to load the libary. This will create a variable called <code>stest</code> containing all the neccessary functions in your working environment.</p>
+<pre><code>source(&quot;https://tvpham.github.io/stest/stest.r&quot;)</code>
+</pre>
+<p>Next, load an example dataset with 4 samples and 2 conditions (<code>group1</code> and <code>group2</code>)</p>
+<pre><code>dat &lt;- read.delim(&quot;https://tvpham.github.io/stest/data-axl.txt&quot;)
+
+colnames(dat)
+
+# extract intensity data
+intensity_data &lt;- dat[, c(&quot;A.1&quot;, &quot;A.2&quot;, &quot;B.1&quot;, &quot;B.2&quot;)]
+
+head(intensity_data)</code></pre>
+<p>The following two statements estimate priors and perform the s-test using the estimated priors. In this example, the first two samples (<code>&quot;group1&quot;</code>) versus the last two samples (<code>&quot;group2&quot;</code>).</p>
+<pre class="r"><code>sdata &lt;- stest$prepare(intensity_data)
+ret &lt;- stest$compare(sdata$d_log2[, c(&quot;A.1&quot;, &quot;A.2&quot;, &quot;B.1&quot;, &quot;B.2&quot;)], 
+                     c(&quot;group1&quot;, &quot;group1&quot;, &quot;group2&quot;, &quot;group2&quot;), 
+                     sdata)</code></pre>
+<p>Finally, write out the result to a tab-deliminated text file</p>
+<pre class="r"><code>write.table(cbind(dat, ret), &quot;stest-result.txt&quot;, sep =&quot;\t&quot;, row.names = FALSE)</code></pre>
+<p>The result is concatenated to the original data. Data are log2-transformed. The column <strong>log_fc</strong> contains log2 of the fold change. The column <strong>pval</strong> contains the p-values of the test and the column <strong>pval.BH</strong> Benjamini-Hochberg corrected p-values. The column <strong>n_detected</strong> counts the number of data points detected.</p>
+
+<br>
+
+<h2>Usage</h2>
+
+<br>
+
+<h3>Estimation of priors</h3>
+
+<p><code>stest$prepare(dat, d_log2 = NULL, pdf_output = &quot;_stest.pdf&quot;, moderate_factor = 1.0, min_factor = 1.0, ignore_missing_data = FALSE)</code></p>
+<p>Note that <code>dat</code> is the non-log data. Missing values are denoted by 0.</p>
+<p>In estimating the prior, the software creates a pdf file called _stest.pdf containing diagnostic information.</p>
+<p>By default, robust CV is used in subsequent steps. If you have a reason to use another value, it is possible by providing <code>cv</code> in the testing step.</p>
+<p>You can also use a different dataset to estimate priors, for example when you have a dedicated set of samples for technical reproducibility analysis. The main data is then provided via the <code>d_log2</code> parameter.</p>
+
+<br>
+
+<h3>Performing the s-test</h3>
+<p><code>stest$compare(d_log2, group, sdata, s2 = NULL, cv = NULL, id = NULL, n.threads = 1, index = 1:nrow(d_log2))</code></p>
+<p>Some main parameters:</p>
+<ul>
+<li><code>d_log2</code>: log2-transformed data</li>
+<li><code>group</code>: group label of each column</li>
+<li><code>sdata</code>: prior estimation from the previous step. The cv estimation can be overriden by <code>cv</code>.</li>
+<li><code>id</code>: matched ids for a paired test. In our example, if our data were paired, this could be <code>c(1,2,1,2)</code>.</li>
+<li><code>n.threads</code>: number of threads to use.</li>
+<li><code>index</code>: a subset of rows.</li>
+</ul>
+
+<br>
+
+<hr>
+
+<br>
+Updated 2019, Thang Pham
+
+</body>
+</html>
