@@ -36,6 +36,15 @@ head(intensity_data)</code></pre>
 ret &lt;- stest$compare(sdata$d_log2[, c(&quot;A.1&quot;, &quot;A.2&quot;, &quot;B.1&quot;, &quot;B.2&quot;)], 
                      c(&quot;group1&quot;, &quot;group1&quot;, &quot;group2&quot;, &quot;group2&quot;), 
                      sdata)</code></pre>
+
+<p>By default, the algorithm provides a model for missing data. One may turn off this feature by setting the parameter <code>ignore_missing_data</code> to TRUE in the first statement.</p>
+<pre><code>sdata &lt;- stest$prepare(intensity_data, ignore_missing_data = TRUE)
+
+ret &lt;- stest$compare(sdata$d_log2[, c(&quot;A.1&quot;, &quot;A.2&quot;, &quot;B.1&quot;, &quot;B.2&quot;)], 
+                     c(&quot;group1&quot;, &quot;group1&quot;, &quot;group2&quot;, &quot;group2&quot;), 
+                     sdata)
+</code></pre>
+
 <p>Finally, write out the result to a tab-deliminated text file</p>
 <pre><code>write.table(cbind(dat, ret), &quot;stest-result.txt&quot;, sep =&quot;\t&quot;, row.names = FALSE)</code></pre>
 <p>The result is concatenated to the original data. Data are log2-transformed. The column <strong>log_fc</strong> contains log2 of the fold change. The column <strong>pval</strong> contains the p-values of the test and the column <strong>pval.BH</strong> Benjamini-Hochberg corrected p-values. The column <strong>n_detected</strong> counts the number of data points detected.</p>
