@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title></title>
-  <meta name="description" content="ION">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>1 Heatmap | ion.utf8.md</title>
+  <meta name="description" content="ION" />
+  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="" />
+  <meta property="og:title" content="1 Heatmap | ion.utf8.md" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="" />
+  <meta name="twitter:title" content="1 Heatmap | ion.utf8.md" />
   
   <meta name="twitter:description" content="ION" />
   
@@ -25,15 +24,16 @@
 
 
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html">
+<link rel="prev" href="index.html"/>
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -48,41 +48,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -98,7 +123,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="./"><font size="7">I</font><svg height="46" width="50"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%"><stop offset="0%" style="stop-color:rgb(128,0,128);stop-opacity:0" /><stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" /></radialGradient></defs><circle cx="25" cy="27" r="8" fill="url(#grad1)"/><circle cx="25" cy="27" r="18" stroke="red" stroke-width="1" fill="none"/><circle cx="37.72792" cy="14.27208" r="4" stroke="purple" fill="purple"/></svg><font size="7">N</font></a></li>
+<li><a href="./index.html"><font size="7">I</font><svg height="46" width="50"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%"><stop offset="0%" style="stop-color:rgb(128,0,128);stop-opacity:0" /><stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" /></radialGradient></defs><circle cx="25" cy="27" r="8" fill="url(#grad1)"/><circle cx="25" cy="27" r="18" stroke="red" stroke-width="1" fill="none"/><circle cx="37.72792" cy="14.27208" r="4" stroke="purple" fill="purple"/></svg><font size="7">N</font></a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Getting started</a></li>
@@ -134,12 +159,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="heatmap" class="section level1">
 <h1><span class="header-section-number">1</span> Heatmap</h1>
-<p><code>ion$heatmap</code> is a wrapper function for the heatmap.2 function in the gplots R package. The first step is to make it available to your R environment</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;https://tvpham.github.io/ion.r&quot;</span>)</code></pre></div>
 <p>Load an example dataset (or pointing to your local, tab-delimitated data file)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span>ion<span class="op">$</span><span class="kw">load</span>(<span class="st">&quot;https://tvpham.github.io/data/example-3groups.txt&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">d &lt;-<span class="st"> </span>ion<span class="op">$</span><span class="kw">load</span>(<span class="st">&quot;https://tvpham.github.io/data/example-3groups.txt&quot;</span>)</a></code></pre></div>
 <p>Check the data by using the <code>head</code>, <code>tail</code>, and <code>dim</code> functions. You should get something like this in RStudio.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(d)</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">head</span>(d)</a></code></pre></div>
 <pre><code>##    a1  a2  a3  b1  b2  b3  c1  c2
 ## 1 624 496 509 414 394 375 325 288
 ## 2 615 854 930 341 523 360 359 329
@@ -147,26 +170,30 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 4 525 412 401 354 321 310 258 228
 ## 5 484 284 315 268 282 307 270 298
 ## 6 482 348 400 242 365 367  81 118</code></pre>
-<p>In genomics data analysis, typically columns are samples and rows are genes. We are often interested in the up and down patterns of genes. Thus, the heatmap often shows the z-scores for each gene across samples (see the z-scores section below). In our example, the data table <code>d</code> can be transformed to z-scores by the statement <code>t(scale(t(d)))</code>. We can show the heatmap and hierachical clusterings of the data stored in <code>d</code> as follows</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">t</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d))))</code></pre></div>
-<pre><code>## Using euclidean distance for columns.
+<p>In genomics and proteomics data analysis, columns are usually samples and rows are genes. We are often interested in the up and down patterns of genes. Thus, the heatmap often shows the z-scores for each gene across samples (see the z-scores section below). We can show the heatmap and hierachical clusterings of <code>d</code> as follows</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(d)</a></code></pre></div>
+<pre><code>## 
+## Rows are tranformed into z-values
+## 
+## Using euclidean distance for columns.
 ## Using complete linkage for columns.
+## 
 ## Using euclidean distance for rows.
 ## Using complete linkage for rows.</code></pre>
-<p><img src="ion_files/figure-html/unnamed-chunk-5-1.png" width="864" /></p>
+<p><img src="ion_files/figure-html/unnamed-chunk-4-1.png" width="864" /></p>
 <div id="z-scores" class="section level2">
 <h2><span class="header-section-number">1.1</span> Z-scores</h2>
-<p>What is <code>t(scale(t(d))))</code>? The <code>t</code> function transposes the data (columns become rows and vice versa). The <code>scale</code> function transforms each data column into z-scores. Thus, this statement converts each row of <code>d</code> into z-scores.</p>
-<p>Specifically, the z-score transformation centers data around zero with unit variance <span class="math display">\[
+<p>By default, the heatmap shows the z-scores of the data by row.The z-score transformation centers data around zero with unit variance
+<span class="math display">\[
 z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
 \]</span></p>
 <p>Let us check with the first row of our data</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(d[<span class="dv">1</span>,])
-(x<span class="op">-</span><span class="kw">mean</span>(x))<span class="op">/</span><span class="kw">sd</span>(x)</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">x &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(d[<span class="dv">1</span>,])</a>
+<a class="sourceLine" id="cb7-2" title="2">(x<span class="op">-</span><span class="kw">mean</span>(x))<span class="op">/</span><span class="kw">sd</span>(x)</a></code></pre></div>
 <pre><code>## [1]  1.7883960  0.6197186  0.7384124 -0.1289654 -0.3115712 -0.4850468
 ## [7] -0.9415614 -1.2793822</code></pre>
 <p>This should be the same as the first row of the transformed data</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">t</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d))))</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">head</span>(<span class="kw">t</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d))))</a></code></pre></div>
 <pre><code>##              a1         a2         a3          b1          b2          b3
 ## [1,]  1.7883960  0.6197186 0.73841239 -0.12896538 -0.31157122 -0.48504678
 ## [2,]  0.3161375  1.3086741 1.62429247 -0.82174976 -0.06592686 -0.74284517
@@ -181,181 +208,224 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
 ## [4,] -0.9826781 -1.2992455
 ## [5,] -0.6136071 -0.2186416
 ## [6,] -1.5590872 -1.2961300</code></pre>
+<p>The value of the parameter <code>z_transform</code> can be set to <code>"row"</code> (default), <code>"col"</code> or <code>none</code>.</p>
 </div>
 <div id="row-names-and-column-names" class="section level2">
 <h2><span class="header-section-number">1.2</span> Row names and column names</h2>
-<p>We want to rotate the figure by skipping the outter transpose <code>t()</code>, showing sample names with colors</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d)),
-            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),
-            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,
-                                 <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),
-            <span class="dt">row_margin =</span> <span class="dv">5</span>)</code></pre></div>
-<pre><code>## Using euclidean distance for columns.
+<p>We want to rotate the figure to show the sample horizontally with sample names and colors. Note that the function <code>t()</code> is a standard R function to transpose a matrix.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">t</span>(d),</a>
+<a class="sourceLine" id="cb11-2" title="2">            <span class="dt">z_transform =</span> <span class="st">&quot;col&quot;</span>,</a>
+<a class="sourceLine" id="cb11-3" title="3">            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),</a>
+<a class="sourceLine" id="cb11-4" title="4">            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,</a>
+<a class="sourceLine" id="cb11-5" title="5">                                 <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),</a>
+<a class="sourceLine" id="cb11-6" title="6">            <span class="dt">row_margin =</span> <span class="dv">5</span>)</a></code></pre></div>
+<pre><code>## 
+## Columns are tranformed into z-values
+## 
+## Using euclidean distance for columns.
 ## Using complete linkage for columns.
+## 
 ## Using euclidean distance for rows.
 ## Using complete linkage for rows.</code></pre>
-<p><img src="ion_files/figure-html/unnamed-chunk-8-1.png" width="864" /></p>
+<p><img src="ion_files/figure-html/unnamed-chunk-7-1.png" width="864" /></p>
 </div>
 <div id="label-font-size" class="section level2">
 <h2><span class="header-section-number">1.3</span> Label font size</h2>
 <p>Try to add parameter <code>cexRow = 2.5</code> to get a more readable text labels (2.5 times bigger). If you have only a few rows (genes), it might be visually pleasing to add separators between cells by setting the <code>sep</code> parameter to <code>TRUE</code>. Let us try with the first 20 rows of our data</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,])),
-            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),
-            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, 
-                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),
-            <span class="dt">row_margin =</span> <span class="dv">5</span>,
-            <span class="dt">cexRow =</span> <span class="fl">2.5</span>,
-            <span class="dt">sep =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## Using euclidean distance for columns.
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">t</span>(d[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,]),</a>
+<a class="sourceLine" id="cb13-2" title="2">            <span class="dt">z_transform =</span> <span class="st">&quot;col&quot;</span>,</a>
+<a class="sourceLine" id="cb13-3" title="3">            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),</a>
+<a class="sourceLine" id="cb13-4" title="4">            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, </a>
+<a class="sourceLine" id="cb13-5" title="5">                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),</a>
+<a class="sourceLine" id="cb13-6" title="6">            <span class="dt">row_margin =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb13-7" title="7">            <span class="dt">cexRow =</span> <span class="fl">2.5</span>,</a>
+<a class="sourceLine" id="cb13-8" title="8">            <span class="dt">sep =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>## 
+## Columns are tranformed into z-values
+## 
+## Using euclidean distance for columns.
 ## Using complete linkage for columns.
+## 
 ## Using euclidean distance for rows.
 ## Using complete linkage for rows.</code></pre>
-<p><img src="ion_files/figure-html/unnamed-chunk-9-1.png" width="864" /></p>
+<p><img src="ion_files/figure-html/unnamed-chunk-8-1.png" width="864" /></p>
 </div>
 <div id="color-key-code" class="section level2">
 <h2><span class="header-section-number">1.4</span> Color key code</h2>
 <p>We can disable the color key (<code>key = FALSE</code>) and column clustering (<code>col_data = NULL</code>)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,])),
-            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),
-            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, 
-                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),
-            <span class="dt">row_margin =</span> <span class="dv">5</span>,
-            <span class="dt">cexRow =</span> <span class="fl">2.5</span>,
-            <span class="dt">sep =</span> <span class="ot">TRUE</span>,
-            <span class="dt">key =</span> <span class="ot">FALSE</span>,
-            
-            <span class="dt">col_data =</span> <span class="ot">NULL</span>)</code></pre></div>
-<pre><code>## Using euclidean distance for rows.
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">t</span>(d[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,]),</a>
+<a class="sourceLine" id="cb15-2" title="2">            <span class="dt">z_transform =</span> <span class="st">&quot;col&quot;</span>,</a>
+<a class="sourceLine" id="cb15-3" title="3">            </a>
+<a class="sourceLine" id="cb15-4" title="4">            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),</a>
+<a class="sourceLine" id="cb15-5" title="5">            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, </a>
+<a class="sourceLine" id="cb15-6" title="6">                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),</a>
+<a class="sourceLine" id="cb15-7" title="7">            <span class="dt">row_margin =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb15-8" title="8">            </a>
+<a class="sourceLine" id="cb15-9" title="9">            <span class="dt">cexRow =</span> <span class="fl">2.5</span>,</a>
+<a class="sourceLine" id="cb15-10" title="10">            <span class="dt">sep =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb15-11" title="11">            <span class="dt">key =</span> <span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb15-12" title="12">            </a>
+<a class="sourceLine" id="cb15-13" title="13">            <span class="dt">col_data =</span> <span class="ot">NULL</span>)</a></code></pre></div>
+<pre><code>## 
+## Columns are tranformed into z-values
+## 
+## 
+## Using euclidean distance for rows.
 ## Using complete linkage for rows.</code></pre>
-<p><img src="ion_files/figure-html/unnamed-chunk-10-1.png" width="864" /></p>
+<p><img src="ion_files/figure-html/unnamed-chunk-9-1.png" width="864" /></p>
 </div>
 <div id="top-spacing-and-left-spacing" class="section level2">
 <h2><span class="header-section-number">1.5</span> Top spacing and left spacing</h2>
 <p>Notice the large white space at the top of the figure above. That is where the parameter <code>lhei</code> comes in (similarly, <code>lwid</code> for space on the left). This parameter should be a vector of 2 components, reflecting the ratio between the top space for color key (+ column clustering tree) and the botton space for heatmap (+ row clustering tree). The default value of [1.5, 4] means that the height of the heatmap should be 4/1.5 ~ 2.7 times bigger than the top space. By making the space for heatmap much bigger than the top, we effective reduce the top space.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,])),
-            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),
-            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, 
-                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),
-            <span class="dt">row_margin =</span> <span class="dv">5</span>,
-            <span class="dt">cexRow =</span> <span class="fl">2.5</span>,
-            <span class="dt">sep =</span> <span class="ot">TRUE</span>,
-            <span class="dt">key =</span> <span class="ot">FALSE</span>,
-           
-            <span class="dt">col_data =</span> <span class="ot">NULL</span>,
-           
-            <span class="dt">lhei =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">100</span>))</code></pre></div>
-<pre><code>## Using euclidean distance for rows.
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">t</span>(d[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,]),</a>
+<a class="sourceLine" id="cb17-2" title="2">            <span class="dt">z_transform =</span> <span class="st">&quot;col&quot;</span>,</a>
+<a class="sourceLine" id="cb17-3" title="3">            </a>
+<a class="sourceLine" id="cb17-4" title="4">            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),</a>
+<a class="sourceLine" id="cb17-5" title="5">            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, </a>
+<a class="sourceLine" id="cb17-6" title="6">                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),</a>
+<a class="sourceLine" id="cb17-7" title="7">            <span class="dt">row_margin =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb17-8" title="8">            </a>
+<a class="sourceLine" id="cb17-9" title="9">            <span class="dt">cexRow =</span> <span class="fl">2.5</span>,</a>
+<a class="sourceLine" id="cb17-10" title="10">            <span class="dt">sep =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb17-11" title="11">            <span class="dt">key =</span> <span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb17-12" title="12">           </a>
+<a class="sourceLine" id="cb17-13" title="13">            <span class="dt">col_data =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb17-14" title="14">           </a>
+<a class="sourceLine" id="cb17-15" title="15">            <span class="dt">lhei =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">100</span>))</a></code></pre></div>
+<pre><code>## 
+## Columns are tranformed into z-values
+## 
+## 
+## Using euclidean distance for rows.
 ## Using complete linkage for rows.</code></pre>
-<p><img src="ion_files/figure-html/unnamed-chunk-11-1.png" width="864" /></p>
+<p><img src="ion_files/figure-html/unnamed-chunk-10-1.png" width="864" /></p>
 <p>We can turn off the row clustering as well (<code>row_data = NULL</code>)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,])),
-           
-            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),
-            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, 
-                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),
-            <span class="dt">row_margin =</span> <span class="dv">5</span>,
-            <span class="dt">cexRow =</span> <span class="fl">2.5</span>,
-            <span class="dt">sep =</span> <span class="ot">TRUE</span>,
-            <span class="dt">key =</span> <span class="ot">FALSE</span>,
-           
-            <span class="dt">col_data =</span> <span class="ot">NULL</span>,
-            <span class="dt">row_data =</span> <span class="ot">NULL</span>,
-           
-            <span class="dt">lhei =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">100</span>),
-            <span class="dt">lwid =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">100</span>))</code></pre></div>
-<p><img src="ion_files/figure-html/unnamed-chunk-12-1.png" width="864" /></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">t</span>(d[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,]),</a>
+<a class="sourceLine" id="cb19-2" title="2">            <span class="dt">z_transform =</span> <span class="st">&quot;col&quot;</span>,</a>
+<a class="sourceLine" id="cb19-3" title="3">           </a>
+<a class="sourceLine" id="cb19-4" title="4">            <span class="dt">row_labels =</span> <span class="kw">colnames</span>(d),</a>
+<a class="sourceLine" id="cb19-5" title="5">            <span class="dt">row_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, </a>
+<a class="sourceLine" id="cb19-6" title="6">                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),</a>
+<a class="sourceLine" id="cb19-7" title="7">            <span class="dt">row_margin =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb19-8" title="8">            <span class="dt">cexRow =</span> <span class="fl">2.5</span>,</a>
+<a class="sourceLine" id="cb19-9" title="9">            <span class="dt">sep =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb19-10" title="10">            <span class="dt">key =</span> <span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb19-11" title="11">           </a>
+<a class="sourceLine" id="cb19-12" title="12">            <span class="dt">col_data =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb19-13" title="13">            <span class="dt">row_data =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb19-14" title="14">           </a>
+<a class="sourceLine" id="cb19-15" title="15">            <span class="dt">lhei =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">100</span>),</a>
+<a class="sourceLine" id="cb19-16" title="16">            <span class="dt">lwid =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">100</span>))</a></code></pre></div>
+<pre><code>## 
+## Columns are tranformed into z-values</code></pre>
+<p><img src="ion_files/figure-html/unnamed-chunk-11-1.png" width="864" /></p>
 </div>
 <div id="display-raw-data" class="section level2">
 <h2><span class="header-section-number">1.6</span> Display raw data</h2>
-<p>If you do not want to display z-score data, set <code>zscore</code> to <code>FALSE</code>, and provide a new color palette. This is because the default palette is suitable for z-score data only. We will try a palette with 32 colors going from yellow to green as follows</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(d,
-            <span class="dt">zscore =</span> <span class="ot">FALSE</span>,
-            <span class="dt">color =</span> <span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>))(<span class="dv">32</span>))</code></pre></div>
+<p>If you do not want to display z-score data, set <code>z_transform</code> to <code>"none"</code>, and provide a new color palette. This is because the default palette is suitable for z-score data only. We will try a palette with 32 colors going from yellow to green as follows</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(d,</a>
+<a class="sourceLine" id="cb21-2" title="2">            <span class="dt">z_transform =</span> <span class="st">&quot;none&quot;</span>,</a>
+<a class="sourceLine" id="cb21-3" title="3">            <span class="dt">color =</span> <span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>))(<span class="dv">32</span>))</a></code></pre></div>
 <pre><code>## Using euclidean distance for columns.
 ## Using complete linkage for columns.
+## 
+## Using euclidean distance for rows.
+## Using complete linkage for rows.</code></pre>
+<p><img src="ion_files/figure-html/unnamed-chunk-12-1.png" width="864" /></p>
+<p>One can observe that the some rows are more intense than others across all samples (you decide if that is interesting!). We can set a minimum value and a maximum value for the heatmap. Values outside of the range will get the extreme colors.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(d,</a>
+<a class="sourceLine" id="cb23-2" title="2">            <span class="dt">z_transform =</span> <span class="st">&quot;none&quot;</span>,</a>
+<a class="sourceLine" id="cb23-3" title="3">            <span class="dt">color =</span> <span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>))(<span class="dv">32</span>),</a>
+<a class="sourceLine" id="cb23-4" title="4">            <span class="dt">color_min =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb23-5" title="5">            <span class="dt">color_max =</span> <span class="dv">30</span>)</a></code></pre></div>
+<pre><code>## Using euclidean distance for columns.
+## Using complete linkage for columns.
+## 
 ## Using euclidean distance for rows.
 ## Using complete linkage for rows.</code></pre>
 <p><img src="ion_files/figure-html/unnamed-chunk-13-1.png" width="864" /></p>
-<p>One can observe that the some rows are more intense than others across all samples (you decide if that is interesting!). We can set a minimum value and a maximum value for the heatmap. Values outside of the range will get the extreme colors.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(d,
-            <span class="dt">zscore =</span> <span class="ot">FALSE</span>,
-            <span class="dt">color =</span> <span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>))(<span class="dv">32</span>),
-            <span class="dt">color_min =</span> <span class="dv">5</span>,
-            <span class="dt">color_max =</span> <span class="dv">30</span>)</code></pre></div>
-<pre><code>## Using euclidean distance for columns.
-## Using complete linkage for columns.
-## Using euclidean distance for rows.
-## Using complete linkage for rows.</code></pre>
-<p><img src="ion_files/figure-html/unnamed-chunk-14-1.png" width="864" /></p>
 </div>
 <div id="clustering-parameters" class="section level2">
 <h2><span class="header-section-number">1.7</span> Clustering parameters</h2>
 <p>We can ignore the row clustering by setting <code>row_data</code> to <code>NULL</code>, and in addition, use the Spearman distance (1-Spearman correlation) for column clustering.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(d,
-            <span class="dt">zscore =</span> <span class="ot">FALSE</span>,
-            <span class="dt">color =</span> <span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>))(<span class="dv">32</span>),
-            <span class="dt">row_data =</span> <span class="ot">NULL</span>,
-            <span class="dt">col_distance =</span> <span class="st">&quot;spearman&quot;</span>)</code></pre></div>
-<pre><code>## Using Spearman distance for columns.
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(d,</a>
+<a class="sourceLine" id="cb25-2" title="2">            <span class="dt">z_transform =</span> <span class="st">&quot;none&quot;</span>,</a>
+<a class="sourceLine" id="cb25-3" title="3">            <span class="dt">color =</span> <span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>))(<span class="dv">32</span>),</a>
+<a class="sourceLine" id="cb25-4" title="4">            <span class="dt">row_data =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb25-5" title="5">            <span class="dt">col_distance =</span> <span class="st">&quot;spearman&quot;</span>)</a></code></pre></div>
+<pre><code>## Using (1 - Spearman correlation) as distance for columns.
 ## Using complete linkage for columns.</code></pre>
-<p><img src="ion_files/figure-html/unnamed-chunk-15-1.png" width="864" /></p>
+<p><img src="ion_files/figure-html/unnamed-chunk-14-1.png" width="864" /></p>
 <p>Note that the dendrogram for columns has changed. We can use the Spearman distance and Ward linkage for column clustering while using z-scores for heatmap and default clustering for rows</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">t</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d))),
-            <span class="dt">col_data =</span> d,
-            <span class="dt">col_distance =</span> <span class="st">&quot;spearman&quot;</span>,
-            <span class="dt">col_linkage =</span> <span class="st">&quot;ward.D2&quot;</span>)</code></pre></div>
-<pre><code>## Using Spearman distance for columns.
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(d,</a>
+<a class="sourceLine" id="cb27-2" title="2">            <span class="dt">z_transform =</span> <span class="st">&quot;col&quot;</span>,</a>
+<a class="sourceLine" id="cb27-3" title="3">            <span class="dt">col_data =</span> d,</a>
+<a class="sourceLine" id="cb27-4" title="4">            <span class="dt">col_distance =</span> <span class="st">&quot;spearman&quot;</span>,</a>
+<a class="sourceLine" id="cb27-5" title="5">            <span class="dt">col_linkage =</span> <span class="st">&quot;ward.D2&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+## Columns are tranformed into z-values
+## 
+## Using (1 - Spearman correlation) as distance for columns.
 ## Using ward.D2 linkage for columns.
+## 
 ## Using euclidean distance for rows.
 ## Using complete linkage for rows.</code></pre>
-<p><img src="ion_files/figure-html/unnamed-chunk-16-1.png" width="864" /></p>
+<p><img src="ion_files/figure-html/unnamed-chunk-15-1.png" width="864" /></p>
 </div>
 <div id="extra-column-annotations" class="section level2">
 <h2><span class="header-section-number">1.8</span> Extra column annotations</h2>
-<p>The reason I modified the <code>heatmap.2</code> function is because I want to display multiple color bars on top of the columns for extra data annotation. The parameter <code>col_color_bar</code> should be a list where each element corresponds to a color bar. Try</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">t</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d))),
-            <span class="dt">col_color_bar =</span> <span class="kw">list</span>(<span class="st">&quot;Subtype&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, 
-                                               <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,
-                                               <span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),
-                                 <span class="st">&quot;MSI status&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;orange&quot;</span>, <span class="st">&quot;orange&quot;</span>,
-                                                  <span class="st">&quot;orange&quot;</span>, <span class="st">&quot;steelblue&quot;</span>,
-                                                  <span class="st">&quot;steelblue&quot;</span>, <span class="st">&quot;steelblue&quot;</span>, 
-                                                  <span class="st">&quot;steelblue&quot;</span>, <span class="st">&quot;steelblue&quot;</span>)),
-            <span class="dt">col_data =</span> d,
-            <span class="dt">col_distance =</span> <span class="st">&quot;spearman&quot;</span>,
-            <span class="dt">col_linkage =</span> <span class="st">&quot;ward.D2&quot;</span>)</code></pre></div>
-<pre><code>## Using Spearman distance for columns.
+<p>To display multiple color (or character) bars on top of the columns for extra data annotation, set the parameter <code>col_color_bar</code> to a list where each element corresponds to a color bar. For example</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(d,</a>
+<a class="sourceLine" id="cb29-2" title="2">            <span class="dt">col_color_bar =</span> <span class="kw">list</span>(<span class="st">&quot;Subtype&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, </a>
+<a class="sourceLine" id="cb29-3" title="3">                                               <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,</a>
+<a class="sourceLine" id="cb29-4" title="4">                                               <span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),</a>
+<a class="sourceLine" id="cb29-5" title="5">                                 <span class="st">&quot;MSI status&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;&quot;</span>,</a>
+<a class="sourceLine" id="cb29-6" title="6">                                                  <span class="st">&quot;&quot;</span>, <span class="st">&quot;+&quot;</span>,</a>
+<a class="sourceLine" id="cb29-7" title="7">                                                  <span class="st">&quot;+&quot;</span>, <span class="st">&quot;+&quot;</span>, </a>
+<a class="sourceLine" id="cb29-8" title="8">                                                  <span class="st">&quot;+&quot;</span>, <span class="st">&quot;+&quot;</span>)),</a>
+<a class="sourceLine" id="cb29-9" title="9">            <span class="dt">col_data =</span> d,</a>
+<a class="sourceLine" id="cb29-10" title="10">            <span class="dt">col_distance =</span> <span class="st">&quot;spearman&quot;</span>,</a>
+<a class="sourceLine" id="cb29-11" title="11">            <span class="dt">col_linkage =</span> <span class="st">&quot;ward.D2&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+## Rows are tranformed into z-values
+## 
+## Using (1 - Spearman correlation) as distance for columns.
 ## Using ward.D2 linkage for columns.
+## 
+## Using euclidean distance for rows.
+## Using complete linkage for rows.</code></pre>
+<p><img src="ion_files/figure-html/unnamed-chunk-16-1.png" width="864" /></p>
+<p>We now add labels to columns as for rows. By default, column labels are rotated by 90 degree. We can alter this with the parameter <code>col_label_rotated</code></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1">ion<span class="op">$</span><span class="kw">heatmap</span>(d,</a>
+<a class="sourceLine" id="cb31-2" title="2">            <span class="dt">col_color_bar =</span> <span class="kw">list</span>(<span class="st">&quot;Subtype&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, </a>
+<a class="sourceLine" id="cb31-3" title="3">                                               <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,</a>
+<a class="sourceLine" id="cb31-4" title="4">                                               <span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),</a>
+<a class="sourceLine" id="cb31-5" title="5">                                 <span class="st">&quot;MSI status&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;&quot;</span>,</a>
+<a class="sourceLine" id="cb31-6" title="6">                                                  <span class="st">&quot;&quot;</span>, <span class="st">&quot;+&quot;</span>,</a>
+<a class="sourceLine" id="cb31-7" title="7">                                                  <span class="st">&quot;+&quot;</span>, <span class="st">&quot;+&quot;</span>, </a>
+<a class="sourceLine" id="cb31-8" title="8">                                                  <span class="st">&quot;+&quot;</span>, <span class="st">&quot;+&quot;</span>)),</a>
+<a class="sourceLine" id="cb31-9" title="9">            <span class="dt">col_data =</span> d,</a>
+<a class="sourceLine" id="cb31-10" title="10">            <span class="dt">col_distance =</span> <span class="st">&quot;spearman&quot;</span>,</a>
+<a class="sourceLine" id="cb31-11" title="11">            <span class="dt">col_linkage =</span> <span class="st">&quot;ward.D2&quot;</span>,</a>
+<a class="sourceLine" id="cb31-12" title="12">            <span class="dt">col_labels =</span> <span class="kw">colnames</span>(d),</a>
+<a class="sourceLine" id="cb31-13" title="13">            <span class="dt">col_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, </a>
+<a class="sourceLine" id="cb31-14" title="14">                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),</a>
+<a class="sourceLine" id="cb31-15" title="15">            <span class="dt">col_margin =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb31-16" title="16">            <span class="dt">cexCol =</span> <span class="fl">2.5</span>,</a>
+<a class="sourceLine" id="cb31-17" title="17">            <span class="dt">col_label_rotated =</span> <span class="dv">45</span>)</a></code></pre></div>
+<pre><code>## 
+## Rows are tranformed into z-values
+## 
+## Using (1 - Spearman correlation) as distance for columns.
+## Using ward.D2 linkage for columns.
+## 
 ## Using euclidean distance for rows.
 ## Using complete linkage for rows.</code></pre>
 <p><img src="ion_files/figure-html/unnamed-chunk-17-1.png" width="864" /></p>
-<p>We now add labels to columns as for rows. By default, column labels are rotated by 45 degree. We can alter this with the parameter <code>col_label_rotated</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ion<span class="op">$</span><span class="kw">heatmap</span>(<span class="kw">t</span>(<span class="kw">scale</span>(<span class="kw">t</span>(d))),
-            <span class="dt">col_color_bar =</span> <span class="kw">list</span>(<span class="st">&quot;Subtype&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, 
-                                               <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,
-                                               <span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),
-                                 <span class="st">&quot;MSI status&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;orange&quot;</span>, <span class="st">&quot;orange&quot;</span>,
-                                                  <span class="st">&quot;orange&quot;</span>, <span class="st">&quot;steelblue&quot;</span>,
-                                                  <span class="st">&quot;steelblue&quot;</span>, <span class="st">&quot;steelblue&quot;</span>, 
-                                                  <span class="st">&quot;steelblue&quot;</span>, <span class="st">&quot;steelblue&quot;</span>)),
-            <span class="dt">col_data =</span> d,
-            <span class="dt">col_distance =</span> <span class="st">&quot;spearman&quot;</span>,
-            <span class="dt">col_linkage =</span> <span class="st">&quot;ward.D2&quot;</span>,
-            <span class="dt">col_labels =</span> <span class="kw">colnames</span>(d),
-            <span class="dt">col_label_colors =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, 
-                                 <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;blue&quot;</span>,<span class="st">&quot;green&quot;</span>, <span class="st">&quot;green&quot;</span>),
-            <span class="dt">col_margin =</span> <span class="dv">5</span>,
-            <span class="dt">cexCol =</span> <span class="fl">2.5</span>,
-            <span class="dt">col_label_rotated =</span> <span class="dv">90</span>)</code></pre></div>
-<pre><code>## Using Spearman distance for columns.
-## Using ward.D2 linkage for columns.
-## Using euclidean distance for rows.
-## Using complete linkage for rows.</code></pre>
-<p><img src="ion_files/figure-html/unnamed-chunk-18-1.png" width="864" /></p>
 </div>
 <div id="troubleshooting" class="section level2">
 <h2><span class="header-section-number">1.9</span> Troubleshooting</h2>
-<p>At times R cannot make the intended graphical draw because of the lack of drawing space. Make the figure area bigger. To clean up the error, call <code>dev.off()</code> a few times!</p>
+<p>At times R cannot make the intended graphical draw because of the lack of drawing space. Make the figure area bigger. To clean up the graphics errors, call <code>dev.off()</code>.</p>
 
 </div>
 </div>
@@ -385,9 +455,10 @@ gitbook.start({
 "google": true,
 "linkedin": true,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin"]
+"all": ["facebook", "google", "twitter", "linkedin"],
+"instapper": false
 },
 "fontsettings": {
 "theme": "white",
@@ -395,6 +466,10 @@ gitbook.start({
 "size": 2
 },
 "edit": null,
+"history": {
+"link": null,
+"text": null
+},
 "download": null,
 "toc": {
 "collapse": "subsection",
@@ -413,10 +488,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
