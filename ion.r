@@ -534,7 +534,7 @@ ion$heatmap <- function(d,
                        col_label_colors = NULL,
                        # column labels colors
 
-                       col_label_rotated = 45,
+                       col_label_rotated = 90,
                        # degree of labels rotation
 
                        col_color_bar = NULL,
