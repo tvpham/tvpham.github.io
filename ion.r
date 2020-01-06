@@ -330,9 +330,27 @@ ion$impute <- function(d, method = "constant", value = 0, seed = 1203) {
 
 ion$load <- function(filename,
                      # a tab-deliminated text file with a header line
+                     col_names = NULL,
                      ...
                      ) {
-    return(read.delim(filename, quote = "", ...))
+    if (is.null(col_names)) {
+        return(read.delim(filename, quote = "", ...))
+    } else {
+        h <- read.delim(filename, nrow = 1)
+        
+        a <- setdiff(col_names, colnames(h))
+        
+        if (length(a) > 0) {
+            message(paste("Column not available:", a, "\n"))
+            return(NULL)
+        }
+        
+        v <- rep("NULL", ncol(h))
+        names(v) <- colnames(h)
+        v[col_names] <- NA
+        
+        return(read.delim(filename, colClasses = v))
+    }
 }
 
 ion$save <- function(d,
