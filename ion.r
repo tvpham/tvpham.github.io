@@ -1083,19 +1083,35 @@ a[startsWith(a, "`")] <- "white"
 image(csc, col = a, axes = F)
 
 a <- as.vector(csc.colors)
+
 for (i in 1:nrow(csc)) {
     for (j in 1:ncol(csc)) {
         if (nchar(a[csc[i,j]]) <= 1) {
-            text((i-1)/(nrow(csc)-1), (j-1)/(ncol(csc)-1),a[csc[i,j]], cex = 1.5)
+            if (ncol(csc) > 1) {
+                text((i-1)/(nrow(csc)-1), (j-1)/(ncol(csc)-1), a[csc[i,j]], cex = 1.5)
+            }
+            else {
+                text((i-1)/(nrow(csc)-1), 0, a[csc[i,j]], cex = 1.5)
+            }
         }
         if (startsWith(a[csc[i,j]],"`")) {
-            eval(parse(text=paste0("points(",
-                                   (i-1)/(nrow(csc)-1),
-                                   ",",
-                                   (j-1)/(ncol(csc)-1), 
-                                   ",",
-                                   substring(a[csc[i,j]],2,1000),
-                                   ")")))
+            if (ncol(csc) > 1) {
+                eval(parse(text=paste0("points(",
+                                       (i-1)/(nrow(csc)-1),
+                                       ",",
+                                       (j-1)/(ncol(csc)-1), 
+                                       ",",
+                                       substring(a[csc[i,j]],2,1000),
+                                       ")")))
+            } else {
+                eval(parse(text=paste0("points(",
+                                       (i-1)/(nrow(csc)-1),
+                                       ",",
+                                       0, 
+                                       ",",
+                                       substring(a[csc[i,j]],2,1000),
+                                       ")")))
+            }
         }
     }
 }
