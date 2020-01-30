@@ -11,15 +11,6 @@ ion <- list()
 
 
 # Main ----
-ion$test <- function(d, groups, method, ...) {
-    
-    if (method == "beta-binomial") {
-        
-    } else {
-        cat("'method' must be one of \"beta-binomial\".")
-    }
-}
-
 
 ion$heatmap <- function(d,
                         # a numeric matrix to show in the heatmap
@@ -721,7 +712,7 @@ ion$beta_binomial_2g_paired <- function(dat, group1, group2, total_count = NULL,
     fc[total_g2 == 0] <- fc[total_g2 == 0]*0 - BIG
     fc[total_g1 == 0 & total_g2 == 0] <- 1
 
-    return (list(fc = out$fc,
+    return (list(fc = fc,
                  pval = out$p.value,
                  pval.BH = p.adjust(out$p.value, method = "BH")))
 }
