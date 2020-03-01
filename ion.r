@@ -1,16 +1,12 @@
 # Author: Thang V Pham
 #
-# This code contains a modified version of the heatmap.2 function
-# in the R gplots package (version 3.0.1)
-#
-# Copyright Thang Pham, 2018-2019
+# Copyright Thang Pham, 2018-2020
 
 # NOTE: sourcing this will replace any existing 'ion' object
 
 ion <- list()
 
-
-# Main ----
+# Heatmap ----
 
 ion$heatmap <- function(d,
                         # a numeric matrix to show in the heatmap
@@ -33,7 +29,7 @@ ion$heatmap <- function(d,
                         # set this to "col", "row", or "none".
                         
                         col_data = NA,
-                        # data use for column clustering
+                        # data for column clustering, use d if NA
                         
                         col_distance = "euclidean",
                         # distance for column clustering, e.g. "pearson" = 1-Pearson correlation, "spearman" = 1-Spearman correlation, "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski".
@@ -66,7 +62,7 @@ ion$heatmap <- function(d,
                         # margin for column labels
                         
                         row_data = NA,
-                        # data for row clustering
+                        # data for row clustering, use d if NA
                         
                         row_distance = "euclidean",
                         # "pearson", "spearman", "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski".
@@ -86,24 +82,22 @@ ion$heatmap <- function(d,
                         row_margin = 0.5,
                         # see column
                         
-                        sep = FALSE,
-                        # a separator between cells
+                        key_margins = c(7 , 1, 0.5, 2),
+                        # margins of the color key
                         
-                        main = NULL,
-                        cexCol = 1,
-                        cexRow = 1,
-                        lwid = NULL,
-                        lhei = NULL,
-                        key = TRUE, ...) {
+                        separator = FALSE,
+                        # a separator between cells
+                    
+                        ...) {
     
     zscore <- z_transform != "none"
     
     if (z_transform == "row") {
-        cat("\nRows are tranformed into z-values\n\n")
+        message("\nRows are tranformed into z-values\n\n")
         d_heatmap <- t(scale(t(d)))
     } else {
         if (z_transform == "col") {
-            cat("\nColumns are tranformed into z-values\n\n")
+            message("\nColumns are tranformed into z-values\n\n")
             d_heatmap <- scale(d)
         } else {
             d_heatmap <- d
@@ -118,22 +112,22 @@ ion$heatmap <- function(d,
         
         if (col_distance == "pearson") {
             col_dist <- as.dist(1 - cor(col_data, method = "pearson", use = "pairwise.complete.obs"))
-            cat("Using (1 - Pearson correlation) as distance for columns.\n")
+            message("Using (1 - Pearson correlation) as distance for columns.\n")
         } else if (col_distance == "spearman") {
             col_dist <- as.dist(1 - cor(col_data, method = "spearman", use = "pairwise.complete.obs"))
-            cat("Using (1 - Spearman correlation) as distance for columns.\n")
+            message("Using (1 - Spearman correlation) as distance for columns.\n")
         } else {
             col_dist <- dist(t(col_data), method = col_distance)
-            cat("Using", col_distance, "distance for columns.\n")
+            message("Using ", col_distance, " distance for columns.\n")
         }
         
         if (sum(is.na(col_dist)) > 0) {
-            cat("\n=== NA values in col distance matrix ===\n")
+            message("\n=== NA values in col distance matrix ===\n")
             col_dist[is.na(col_dist)]  <-  max(col_dist, na.rm =  TRUE)
         }
         
         col_tree <- hclust(col_dist, method = col_linkage)
-        cat("Using", col_linkage, "linkage for columns.\n")
+        message("Using ", col_linkage, " linkage for columns.\n")
         
         if (col_reorder) {
             col_clustering <- reorder(as.dendrogram(col_tree), 1:ncol(as.matrix(col_dist)), agglo.FUN = mean)
@@ -142,7 +136,7 @@ ion$heatmap <- function(d,
         }
     }
     
-    cat("\n")
+    message("\n")
     
     if (!is.null(row_data)) {
         
@@ -152,22 +146,22 @@ ion$heatmap <- function(d,
         
         if (row_distance == "pearson") {
             row_dist <- as.dist(1 - cor(t(row_data), method = "pearson", use = "pairwise.complete.obs"))
-            cat("Using (1 - Pearson correlation) as distance for rows.\n")
+            message("Using (1 - Pearson correlation) as distance for rows.\n")
         } else if (row_distance == "spearman") {
             row_dist <- as.dist(1 - cor(t(row_data), method = "spearman", use = "pairwise.complete.obs"))
-            cat("Using (1 - Spearman correlation) as distance for rows.\n")
+            message("Using (1 - Spearman correlation) as distance for rows.\n")
         } else {
             row_dist <- dist(row_data, method = row_distance)
-            cat("Using", row_distance, "distance for rows.\n")
+            message("Using ", row_distance, " distance for rows.\n")
         }
         
         if (sum(is.na(row_dist)) > 0) {
-            cat("\n=== NA values in row distance matrix ===\n")
+            message("\n=== NA values in row distance matrix ===\n")
             row_dist[is.na(row_dist)]  <-  max(row_dist, na.rm =  TRUE)
         }
         
         row_tree <- hclust(row_dist, method = row_linkage)
-        cat("Using", row_linkage, "linkage for rows.\n")
+        message("Using ", row_linkage, " linkage for rows.\n")
         
         if (row_reorder) {
             row_clustering <- reorder(as.dendrogram(row_tree), 1:ncol(as.matrix(row_dist)), agglo.FUN = mean)
@@ -177,7 +171,7 @@ ion$heatmap <- function(d,
         }
     }
     
-    cat("\n")
+    message("\n")
     
     colsep  <- seq(1, ncol(d_heatmap))
     rowsep  <- seq(1, nrow(d_heatmap))
@@ -186,7 +180,7 @@ ion$heatmap <- function(d,
     sepwidth  <-  c(0.02, 0.02)
     
     
-    if (!sep) {
+    if (!separator) {
         colsep <- NULL
         rowsep <- NULL
         sepcolor <- NULL
@@ -224,10 +218,6 @@ ion$heatmap <- function(d,
                                          Rowv = if (is.null(row_data)) FALSE else row_clustering,
                                          col = color,
                                          breaks = if (zscore) seq(-2, 2, length.out = (length(color) + 1)) else seq(ifelse(is.null(color_min), min(d_heatmap, na.rm = TRUE), color_min), ifelse(is.null(color_max), max(d_heatmap, na.rm = TRUE), color_max), length.out = (length(color) + 1)),
-                                         key = key,
-                                         
-                                         cexRow = cexRow,
-                                         cexCol = cexCol,
                                          
                                          colsep = colsep,
                                          rowsep = rowsep,
@@ -252,9 +242,9 @@ ion$heatmap <- function(d,
                                          
                                          srtCol = col_label_rotated,
                                          
-                                         lwid = lwid,
-                                         lhei = lhei,
-                                         main = main, ...)
+                                         key_margins = key_margins,
+                                         
+                                         ...)
 }
 
 # Normalization ----
@@ -754,8 +744,10 @@ ion$str_split <- function(comma_separated_text, sep = ",") {
 
 
 
-# Heatmap ----
+# Others ----
 
+# This code contains a modified version of the heatmap.2 function in the R gplots
+# package (version 3.0.1).
 
 ion$.heatmap.2_gplots.3.0.1_modified <- function (x, Rowv = TRUE, Colv = if (symm) "Rowv" else TRUE,
     distfun = dist, hclustfun = hclust, dendrogram = c("both",
@@ -1310,8 +1302,14 @@ for (i in 1:nrow(csc)) {
         
         # Thang BEGIN
         if (is.null(key_margins)) {
-            tmp <- dev.size("in")
-            key_margins <- c(tmp[1]/2, 1, 0.5, 2)
+            #tmp <- dev.size("in")
+            #key_margins <- c(tmp[1]/2, 1, 0.5, 2)
+            
+            #if (dev.size("in")[2] < 2) {
+            #    message("Why such a short figure?")
+            #}
+            #key_margins <- c(dev.size("in")[2] * 1.5 , 1, 0.5, 2) # 6/4
+            key_margins <- c(7 , 1, 0.5, 2)
         }
         
         par(mar = key_margins)
@@ -1327,7 +1325,7 @@ for (i in 1:nrow(csc)) {
                 do_stop <<- TRUE
             })
         if (do_stop) {
-            cat("\nCannot make legend key.\nRun dev.off(), then make the margin bigger or set key = FALSE.\n")
+            message("\nCannot make legend key.\nRun dev.off(), then make the margin bigger or set key = FALSE.\n")
             return(invisible(0))
         }
         # Thang END
