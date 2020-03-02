@@ -28,6 +28,9 @@ ion$heatmap <- function(d,
                         z_transform = "row",
                         # set this to "col", "row", or "none".
                         
+                        
+                        #--- COLUMNS ---
+                        
                         col_data = NA,
                         # data for column clustering, use d if NA
                         
@@ -61,6 +64,8 @@ ion$heatmap <- function(d,
                         col_margin = 0.5,
                         # margin for column labels
                         
+                        #--- ROW ---
+                        
                         row_data = NA,
                         # data for row clustering, use d if NA
                         
@@ -82,8 +87,11 @@ ion$heatmap <- function(d,
                         row_margin = 0.5,
                         # see column
                         
-                        key_margins = c(7 , 1, 0.5, 2),
-                        # margins of the color key
+                        
+                        #--- OTHERS ---
+                        
+                        color_key_margins = NULL,
+                        # margins of the color key, default c(5, 1, 0.5, 2) if NULL
                         
                         separator = FALSE,
                         # a separator between cells
@@ -211,7 +219,6 @@ ion$heatmap <- function(d,
         }
     }
     
-    
     ion$.heatmap.2_gplots.3.0.1_modified(as.matrix(d_heatmap),
                                          dendrogram = dendrogram,
                                          Colv = if (is.null(col_data)) FALSE else col_clustering,
@@ -242,7 +249,7 @@ ion$heatmap <- function(d,
                                          
                                          srtCol = col_label_rotated,
                                          
-                                         key_margins = key_margins,
+                                         key_margins = if (is.null(color_key_margins)) c(dev.size("in")[2]+0.5, 1, 0.5, 2) else color_key_margins,
                                          
                                          ...)
 }
@@ -1270,7 +1277,8 @@ for (i in 1:nrow(csc)) {
     else plot.new()
     if (!is.null(main))
         title(main, cex.main = 1.5 * op[["cex.main"]])
-    if (key) {
+
+        if (key) {
         mar <- c(5, 4, 2, 1)
         if (!is.null(key.xlab) && is.na(key.xlab))
             mar[1] <- 2
@@ -1309,7 +1317,7 @@ for (i in 1:nrow(csc)) {
             #    message("Why such a short figure?")
             #}
             #key_margins <- c(dev.size("in")[2] * 1.5 , 1, 0.5, 2) # 6/4
-            key_margins <- c(7 , 1, 0.5, 2)
+            key_margins <- c(dev.size("in")[2]+0.5, 1, 0.5, 2)
         }
         
         par(mar = key_margins)
@@ -1325,7 +1333,8 @@ for (i in 1:nrow(csc)) {
                 do_stop <<- TRUE
             })
         if (do_stop) {
-            message("\nCannot make legend key.\nRun dev.off(), then make the margin bigger or set key = FALSE.\n")
+            message("\nCannot make legend key.\nRun dev.off(), then make the margin bigger, or color_key_margins smaller, or set key = FALSE.\n")
+            message("Current color_key_margin = ", color_key_margin)
             return(invisible(0))
         }
         # Thang END
