@@ -1,7 +1,9 @@
 # Author: Thang V Pham
 #
-# Copyright Thang Pham, 2018-2020
-
+# Copyright Thang V Pham, 2018-2020
+#
+# Version: 20.03.03
+#
 # NOTE: sourcing this will replace any existing 'ion' object
 
 ion <- list()
