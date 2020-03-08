@@ -396,7 +396,7 @@ d &lt;- ion$load(&quot;https://tvpham.github.io/data/example-3groups.txt&quot;)<
 ## 6 482 348 400 242 365 367  81 118</code></pre>
 <p>In -omics data analysis, columns are usually samples and rows are genes/proteins. We are often interested in the up and down patterns of genes. Thus, the heatmap often shows the z-scores for each gene across samples (see the z-scores section below). We can show the heatmap and hierachical clusterings of <code>d</code> as follows</p>
 <pre class="r"><code>ion$heatmap(d)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-4-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-4-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="z-scores" class="section level2">
 <h2>Z-scores</h2>
@@ -425,7 +425,7 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
             row_label_colors = c(&quot;red&quot;, &quot;red&quot;, &quot;red&quot;, &quot;blue&quot;, &quot;blue&quot;,
                                  &quot;blue&quot;,&quot;green&quot;, &quot;green&quot;),
             row_margin = 5)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-7-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-7-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="label-font-size" class="section level2">
 <h2>Label font size</h2>
@@ -438,7 +438,7 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
             row_margin = 5,
             cexRow = 2.5,
             separator = TRUE)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-8-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-8-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="color-key-code" class="section level2">
 <h2>Color key code</h2>
@@ -452,7 +452,7 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
             cexRow = 2.5,
             separator = TRUE,
             color_key_margins = c(10, 1, 0.5, 2))</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-9-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-9-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 <p>When the area for color is too small, R will report “figure margins too large”. When this occurs, the graphics state might be corrupted. Try <code>dev.off()</code> and reduce the <code>color_key_margins</code> to a smaller value, such as c(0.5, 1, 0.5, 2).</p>
 </div>
 <div id="top-and-left-spacing" class="section level2">
@@ -473,7 +473,7 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
             col_data = NULL,
 
             key = FALSE)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-10-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-10-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 <p>Notice the large white space at the top of the figure above. We can set the parameter <code>lhei</code> to remove this white space (similarly, <code>lwid</code> for the space on the left). This parameter should be a vector of 2 components, reflecting the ratio between the top space for the color key and the column clustering tree and the botton space for heatmap and the row clustering tree. The default value of c(1.5, 4) means that the height of the heatmap should be 4/1.5 ~ 2.7 times bigger than the top space. By making the space for heatmap much bigger than the top, we effectively remove the top space.</p>
 <pre class="r"><code>ion$heatmap(t(d[1:20,]),
             z_transform = &quot;col&quot;,
@@ -490,7 +490,7 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
             col_data = NULL,
            
             lhei = c(1, 100))</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-11-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-11-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 <p>We can turn off the row clustering as well (<code>row_data = NULL</code>)</p>
 <pre class="r"><code>ion$heatmap(t(d[1:20,]),
             z_transform = &quot;col&quot;,
@@ -508,7 +508,7 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
            
             lhei = c(1, 100),
             lwid = c(1, 100))</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-12-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-12-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="display-raw-data" class="section level2">
 <h2>Display raw data</h2>
@@ -516,14 +516,14 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
 <pre class="r"><code>ion$heatmap(d,
             z_transform = &quot;none&quot;,
             color = colorRampPalette(c(&quot;yellow&quot;, &quot;green&quot;))(32))</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-13-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-13-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 <p>It can be seen that the some rows are more intense than others across all samples (you decide if that is interesting!). We can set a minimum value and a maximum value for the heatmap as follows (values outside of the range will get the extreme colors).</p>
 <pre class="r"><code>ion$heatmap(d,
             z_transform = &quot;none&quot;,
             color = colorRampPalette(c(&quot;yellow&quot;, &quot;green&quot;))(32),
             color_min = 5,
             color_max = 30)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-14-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-14-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="clustering-parameters" class="section level2">
 <h2>Clustering parameters</h2>
@@ -533,14 +533,14 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
             color = colorRampPalette(c(&quot;yellow&quot;, &quot;green&quot;))(32),
             row_data = NULL,
             col_distance = &quot;spearman&quot;)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-15-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-15-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 <p>Note that the dendrogram for columns has changed. We can use the Spearman distance and Ward linkage for column clustering while using z-scores for heatmap and default clustering for rows</p>
 <pre class="r"><code>ion$heatmap(d,
             z_transform = &quot;col&quot;,
             col_data = d,
             col_distance = &quot;spearman&quot;,
             col_linkage = &quot;ward.D2&quot;)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-16-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-16-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="extra-column-annotations" class="section level2">
 <h2>Extra column annotations</h2>
@@ -556,7 +556,7 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
             col_data = d,
             col_distance = &quot;spearman&quot;,
             col_linkage = &quot;ward.D2&quot;)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-17-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-17-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 <p>We now add labels to columns as for rows. By default, column labels are rotated by 90 degree. We can alter this with the parameter <code>col_label_rotated</code></p>
 <pre class="r"><code>ion$heatmap(d,
             col_color_bar = list(&quot;Subtype&quot; = c(&quot;red&quot;, &quot;red&quot;, &quot;red&quot;, 
@@ -575,7 +575,7 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
             col_margin = 5,
             cexCol = 2.5,
             col_label_rotated = 45)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-18-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-18-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="legends" class="section level2">
 <h2>Legends</h2>
@@ -603,7 +603,7 @@ par(mar = c(0, 0, 0, 0), fig = c(0.9, 1, 0, 0.7), new = TRUE)
 plot.new()
 legend(&quot;topleft&quot;, c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;), col = c(&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;),
        pch=15, pt.cex=1.5, bty = &quot;n&quot;)</code></pre>
-<p><img src="heatmap_files/figure-html/unnamed-chunk-19-1.png" width="768" style="background-color: #9ecff7; padding:40px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="heatmap_files/figure-html/unnamed-chunk-19-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="troubleshooting" class="section level2">
 <h2>Troubleshooting</h2>
