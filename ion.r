@@ -1336,7 +1336,7 @@ for (i in 1:nrow(csc)) {
             })
         if (do_stop) {
             message("\nCannot make legend key.\nRun dev.off(), then make the margin bigger, or color_key_margins smaller, or set key = FALSE.\n")
-            message("Current color_key_margin = ", color_key_margin)
+            cat("Current color_key_margins", key_margins, "\n")
             return(invisible(0))
         }
         # Thang END
