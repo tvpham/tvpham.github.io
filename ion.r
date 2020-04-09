@@ -748,9 +748,12 @@ ion$beta_binomial_4g <- function(dat, group1, group2, group3, group4, total_coun
 # Text processing ----
 
 ion$str_split <- function(comma_separated_text, sep = ",") {
-    return(gsub(" ", "", unlist(strsplit(comma_separated_text, sep))))
+    return(unlist(strsplit(comma_separated_text, sep)))
 }
 
+ion$str_split_trim <- function(comma_separated_text, sep = ",") {
+    return(gsub(" ", "", unlist(strsplit(comma_separated_text, sep))))
+}
 
 
 # Others ----
