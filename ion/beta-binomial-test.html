@@ -10,8 +10,9 @@
 
 
 
+<meta name="date" content="2020-04-16" />
 
-<title>ION</title>
+<title>Beta-binomial test</title>
 
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +20,9 @@
 <script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="libs/navigation-1.1/tabsets.js"></script>
 <link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="libs/highlightjs-9.12.0/highlight.js"></script>
@@ -257,6 +261,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -264,6 +331,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -302,51 +379,75 @@ $(document).ready(function () {
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-<div style="text-align:center">
-	<svg viewBox="0 0 80 50" height="300" width="300">
-	<symbol id="ion" > 
-	<defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%"><stop offset="0%" style="stop-color:rgb(128,0,128);stop-opacity:0" /><stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
-	</radialGradient>
-	</defs>
-	<line x1="4" y1="9" x2="4" y2="45" style="stroke:rgb(0,255,0);stroke-width:5"/>
-	<circle cx="30" cy="27" r="8" fill="url(#grad1)"/><circle cx="30" cy="27" r="18" stroke="red" stroke-width="1" fill="none"/><circle cx="39" cy="13" r="4" stroke="purple" fill="purple"/>
-	<line x1="56" y1="9" x2="56" y2="45" style="stroke:rgb(0,255,0);stroke-width:5"/>
-	<line x1="56.5" y1="10.5" x2="75.5" y2="43.5" style="stroke:rgb(0,255,0);stroke-width:5"/>
-	<line x1="76" y1="9" x2="76" y2="45" style="stroke:rgb(0,255,0);stroke-width:5"/>
-
-	</symbol>
-	<use xlink:href="#ion"/>
-	</svg>
-</div>
-
-<div style="text-align: center; font-size:xx-large"> 
-	Data analysis for the masses
-	<br>
-	<br>
-</div>
-
-<div style="text-align: center; font-size:large"> 
-     Thang V Pham
-	<br>
-	<br>
-    <br>
-</div>
 
 <div class="fluid-row" id="header">
 
 
 
+<h1 class="title toc-ignore">Beta-binomial test</h1>
+<h4 class="author">Thang V Pham</h4>
+<h4 class="date">16 April 2020</h4>
 
 </div>
 
 
-<p>The ion library contains a number of convenient functions and tutorials to make data analysis easy in R. Open an R console and enter</p>
-<pre class="r"><code>source(&quot;https://tvpham.github.io/ion.r&quot;)</code></pre>
-<p>Data files are usually in a tab-deliminated text format with a single header line. If you are familiar with R, you can use a variety of other data formats. If you are a novice user, use other tools such as Excel or LibreOffice Calc, to create tab-deliminated text files.</p>
-<p>Enjoy.</p>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You will need to install the package <code>ibb</code> from the site <a href="https://tvpham.github.io/ibb/">https://tvpham.github.io/ibb/</a>.</p>
+<p>On Windows with a recent version of R, the following is likely to work</p>
+<pre class="r"><code>install.packages(&quot;https://tvpham.github.io/ibb/ibb_18.09.zip&quot;, repos = NULL, type = &quot;win.binary&quot;)</code></pre>
+<p>Like other R packages, you will need to install the package once only.</p>
+</div>
+<div id="two-group-comparison" class="section level2">
+<h2>Two-group comparison</h2>
+<p>Load the ion library and load an example dataset (or pointing to your local, tab-delimitated data file)</p>
+<pre class="r"><code>source(&quot;https://tvpham.github.io/ion.r&quot;)
+
+d &lt;- ion$load(&quot;https://tvpham.github.io/data/example-3groups.txt&quot;)</code></pre>
+<p>Check the data with the <code>head</code> function</p>
+<pre class="r"><code>head(d)</code></pre>
+<pre><code>##    a1  a2  a3  b1  b2  b3  c1  c2
+## 1 624 496 509 414 394 375 325 288
+## 2 615 854 930 341 523 360 359 329
+## 3 553 560 745 819 490 481 480 500
+## 4 525 412 401 354 321 310 258 228
+## 5 484 284 315 268 282 307 270 298
+## 6 482 348 400 242 365 367  81 118</code></pre>
+<p>To compare the <code>a</code> samples to <code>b</code> samples, call</p>
+<pre class="r"><code>out &lt;- ion$beta_binomial_2g(d,
+                            c(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;),
+                            c(&quot;b1&quot;, &quot;b2&quot;, &quot;b3&quot;))
+
+ion$save(out, &quot;output.txt&quot;)</code></pre>
+<p>In the first statement, the first parameter is the raw count data. The second parameter is column names of the first group and the third parameter column names of the second group. The output has three components “fc” fold change, “pval” p-value, and “pval.BH” p-value adjusted for multiple testing using the Benjamini-Hochberg method (Benjamini &amp; Hochberg, 1995).</p>
+<p>The second statement write the result to an output file. Nevertheless, we often want to write out the normalized count data as well. This is because the beta-binomial test uses the normalized values internally. The normalized values are obtained by scaling then original count values so that the total count are equal across all samples.</p>
+<pre class="r"><code>d_norm &lt;- ion$normalize_global(d)
+
+ion$save(cbind(d, d_norm, out), &quot;output.txt&quot;)</code></pre>
+</div>
+<div id="three-group-comparison" class="section level2">
+<h2>Three-group comparison</h2>
+<p>To compare <code>a</code>, <code>b</code>, and <code>c</code> samples, call</p>
+<pre class="r"><code>out &lt;- ion$beta_binomial_3g(d,
+                            c(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;),
+                            c(&quot;b1&quot;, &quot;b2&quot;, &quot;b3&quot;),
+                            c(&quot;c1&quot;, &quot;c2&quot;))</code></pre>
+<p>The output now contains only two components: “pval” “pval.BH” because there is no fold change among three groups.</p>
+<p>There is also a function for four-group comparison <code>ion$beta_binomial_4g()</code>. Refer to the manual for comparison of more than four groups.</p>
+</div>
+<div id="paired-sample-test" class="section level2">
+<h2>Paired sample test</h2>
+<p>If <code>a</code> and <code>b</code> samples are matched, for example individual patients before and after treatment, a paired sample test is appropriate</p>
+<pre class="r"><code>out &lt;- ion$beta_binomial_2g_paired(d,
+                                   c(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;),
+                                   c(&quot;b1&quot;, &quot;b2&quot;, &quot;b3&quot;))</code></pre>
+<p>Like the independent sample test, the result of a paired test has three components: “fc”, “pval”, and “pval.BH” standing for fold change, p-value and p-value corrected for multiple testing using the Benjamini Hochberg method, respectively.</p>
+</div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -379,6 +480,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
