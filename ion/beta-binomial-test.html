@@ -397,7 +397,7 @@ div.tocify {
 <p>The R package <code>ibb</code> implements the beta-binomial test for comparative analysis of count data. The package is available at <a href="https://tvpham.github.io/ibb/">https://tvpham.github.io/ibb/</a>.</p>
 <p>On Windows with a recent version of R, the following is likely to work</p>
 <pre class="r"><code>install.packages(&quot;https://tvpham.github.io/ibb/ibb_18.09.zip&quot;, repos = NULL, type = &quot;win.binary&quot;)</code></pre>
-<p>Like for other R packages, you will need to install the package only once before use.</p>
+<p>Like for other R packages, you need to install the package only once before use.</p>
 </div>
 <div id="two-group-comparison" class="section level2">
 <h2>Two-group comparison</h2>
@@ -414,15 +414,15 @@ d &lt;- ion$load(&quot;https://tvpham.github.io/data/example-3groups.txt&quot;)<
 ## 4 525 412 401 354 321 310 258 228
 ## 5 484 284 315 268 282 307 270 298
 ## 6 482 348 400 242 365 367  81 118</code></pre>
-<p>Suppose there are three groups <code>a</code>, <code>b</code> and <code>c</code> as indicated by the column names. To compare the <code>a</code> samples to the <code>b</code> samples and store the result, call</p>
+<p>Suppose that there are three groups <code>a</code>, <code>b</code> and <code>c</code> as indicated by the column names. To compare the <code>a</code> samples to the <code>b</code> samples and store the result, call</p>
 <pre class="r"><code>out &lt;- ion$beta_binomial_2g(d,
                             c(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;),
                             c(&quot;b1&quot;, &quot;b2&quot;, &quot;b3&quot;))
 
 ion$save(out, &quot;output.txt&quot;)</code></pre>
-<p>In the first statement, the first parameter is the <strong>raw count data</strong>. The second parameter is <strong>column names of the first group</strong> and the third parameter <strong>column names of the second group</strong>. The returned value <code>out</code> is a list of three components “fc” fold change, “pval” p-value, and “pval.BH” p-value adjusted for multiple testing using the Benjamini-Hochberg method (Benjamini &amp; Hochberg, 1995).</p>
+<p>In the first statement, the first parameter is the <strong>raw count data</strong>. The second parameter is the <strong>column names of the first group</strong> and the third parameter the <strong>column names of the second group</strong>. The returned value <code>out</code> is a list of three components “fc” fold change, “pval” p-value, and “pval.BH” p-value adjusted for multiple testing using the Benjamini-Hochberg method (Benjamini &amp; Hochberg, 1995).</p>
 <p>The second statement saves the returned value to a tab-deliminated text file. Examine the content of <em>output.txt</em>.</p>
-<p>We often want to write out the _<strong>normalized count data</strong> as well. This is because the beta-binomial test uses the normalized values internally. The normalized values are obtained by scaling the original count values so that the total counts are equal across all samples.</p>
+<p>We often want to write out the <strong>normalized count data</strong> as well. This is because the beta-binomial test uses the normalized values internally. The normalized values are obtained by scaling the original count values so that the total counts are equal across all samples.</p>
 <pre class="r"><code>d_norm &lt;- ion$normalize_global(d)
 
 ion$save(cbind(d, d_norm, out), &quot;output.txt&quot;)</code></pre>
@@ -430,7 +430,7 @@ ion$save(cbind(d, d_norm, out), &quot;output.txt&quot;)</code></pre>
 <pre class="r"><code>colSums(d_norm)</code></pre>
 <pre><code>##    a1    a2    a3    b1    b2    b3    c1    c2 
 ## 19159 19159 19159 19159 19159 19159 19159 19159</code></pre>
-<p>The normalized data <code>d_norm</code> can be used in subsequent analysis, for example for data clustering.</p>
+<p>The normalized data <code>d_norm</code> can be used in subsequent analyses, for example for data clustering.</p>
 <p>For <strong>unsupervised clustering</strong>, we do not use the result of any differential analysis</p>
 <pre class="r"><code>ion$heatmap(t(d_norm),
             z_transform = &quot;col&quot;,
@@ -450,7 +450,7 @@ ion$save(cbind(d, d_norm, out), &quot;output.txt&quot;)</code></pre>
 </div>
 <div id="three-group-comparison" class="section level2">
 <h2>Three-group comparison</h2>
-<p>To compare the <code>a</code>, <code>b</code>, and <code>c</code> samples, call</p>
+<p>To compare the <code>a</code>, <code>b</code>, and <code>c</code> samples, use the function <code>ion$beta_binomial_3g</code>.</p>
 <pre class="r"><code>out &lt;- ion$beta_binomial_3g(d,
                             c(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;),
                             c(&quot;b1&quot;, &quot;b2&quot;, &quot;b3&quot;),
@@ -464,16 +464,16 @@ ion$save(cbind(d, d_norm, out), &quot;output.txt&quot;)</code></pre>
 <pre class="r"><code>out &lt;- ion$beta_binomial_2g_paired(d,
                                    c(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;),
                                    c(&quot;b1&quot;, &quot;b2&quot;, &quot;b3&quot;))</code></pre>
-<p>Like the independent sample test, the result of a paired test is a list with three components “fc”, “pval”, and “pval.BH” standing for fold change, p-value and corrected p-value, respectively.</p>
+<p>Note that the sample orders are important so that “a1” is matched to “b1”, “a2” to “b2”, and “a3” to “b3”. The returned value is a list with three components “fc”, “pval”, and “pval.BH” standing for fold change, p-value and corrected p-value, respectively.</p>
 </div>
 <div id="citations" class="section level2">
 <h2>Citations</h2>
 <ul>
-<li><p>For the independent sample test, the citation is</p>
+<li><p>For the independent sample test</p>
 <p>Pham TV, Piersma SR, Warmoes M, Jimenez CR (2010) <a href="http://bioinformatics.oxfordjournals.org/content/26/3/363.long">On the beta binomial model for analysis of spectral count data in label-free tandem mass spectrometry-based proteomics</a>. <em>Bioinformatics</em>, 26(3):363-369.</p></li>
-<li><p>For the paired sample test, the citation is</p>
+<li><p>For the paired sample test</p>
 <p>Pham TV, Jimenez CR (2012) <a href="http://bioinformatics.oxfordjournals.org/content/28/18/i596.full">An accurate paired sample test for count data</a>. <em>Bioinformatics</em>, 28(18):i596-i602.</p></li>
-<li><p>The reference for the Benjamini-Hochberg method for multiple test correction is</p>
+<li><p>For the Benjamini-Hochberg method for multiple test correction</p>
 <p>Benjamini Y, Hochberg Y (1995) Controlling the false discovery rate: a practical and powerful approach to multiple testing. <em>Journal of the Royal Statistical Society Series B</em>; 57, 289-300.</p></li>
 </ul>
 </div>
