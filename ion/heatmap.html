@@ -361,6 +361,9 @@ div.tocify {
         <li>
   <a href="heatmap.html">Heatmap</a>
 </li>
+<li>
+  <a href="plots.html">Plots</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Statistics
@@ -400,13 +403,6 @@ div.tocify {
 d &lt;- ion$load(&quot;https://tvpham.github.io/data/example-3groups.txt&quot;)</code></pre>
 <p>Check the data by using the <code>head</code>, <code>tail</code>, and <code>dim</code> functions. You should get something like the following in R.</p>
 <pre class="r"><code>head(d)</code></pre>
-<pre><code>##    a1  a2  a3  b1  b2  b3  c1  c2
-## 1 624 496 509 414 394 375 325 288
-## 2 615 854 930 341 523 360 359 329
-## 3 553 560 745 819 490 481 480 500
-## 4 525 412 401 354 321 310 258 228
-## 5 484 284 315 268 282 307 270 298
-## 6 482 348 400 242 365 367  81 118</code></pre>
 <p>In -omics data analysis, columns are usually samples and rows are genes/proteins. We are often interested in the up and down patterns of genes. Thus, the heatmap often shows the z-scores for each gene across samples (see the z-scores section below). We can show the heatmap and hierachical clusterings of <code>d</code> as follows</p>
 <pre class="r"><code>ion$heatmap(d)</code></pre>
 <p><img src="heatmap_files/figure-html/unnamed-chunk-4-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
@@ -419,14 +415,11 @@ z = \frac{x-\mbox{mean}(x)}{\mbox{standard deviation}(x)}
 <p>Let us check with the first row of our data</p>
 <pre class="r"><code>x &lt;- as.numeric(d[1,])
 (x-mean(x))/sd(x)</code></pre>
-<pre><code>## [1]  1.7883960  0.6197186  0.7384124 -0.1289654 -0.3115712 -0.4850468 -0.9415614
-## [8] -1.2793822</code></pre>
+<pre><code>## [1]  1.7883960  0.6197186  0.7384124 -0.1289654 -0.3115712 -0.4850468 -0.9415614 -1.2793822</code></pre>
 <p>This should be the same as the first row of the transformed data</p>
 <pre class="r"><code>head(t(scale(t(d))), n = 1)</code></pre>
-<pre><code>##            a1        a2        a3         b1         b2         b3         c1
-## [1,] 1.788396 0.6197186 0.7384124 -0.1289654 -0.3115712 -0.4850468 -0.9415614
-##             c2
-## [1,] -1.279382</code></pre>
+<pre><code>##            a1        a2        a3         b1         b2         b3         c1        c2
+## [1,] 1.788396 0.6197186 0.7384124 -0.1289654 -0.3115712 -0.4850468 -0.9415614 -1.279382</code></pre>
 <p>The value of the parameter <code>z_transform</code> can be set to <code>"row"</code> (default), <code>"col"</code> or <code>"none"</code>. Type <code>?scale</code> at the R console to know more about the <code>scale</code> function.</p>
 </div>
 <div id="row-and-column-labels" class="section level2">

@@ -361,6 +361,9 @@ div.tocify {
         <li>
   <a href="heatmap.html">Heatmap</a>
 </li>
+<li>
+  <a href="plots.html">Plots</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Statistics
@@ -407,13 +410,6 @@ div.tocify {
 d &lt;- ion$load(&quot;https://tvpham.github.io/data/example-3groups.txt&quot;)</code></pre>
 <p>Check the head of the loaded data</p>
 <pre class="r"><code>head(d)</code></pre>
-<pre><code>##    a1  a2  a3  b1  b2  b3  c1  c2
-## 1 624 496 509 414 394 375 325 288
-## 2 615 854 930 341 523 360 359 329
-## 3 553 560 745 819 490 481 480 500
-## 4 525 412 401 354 321 310 258 228
-## 5 484 284 315 268 282 307 270 298
-## 6 482 348 400 242 365 367  81 118</code></pre>
 <p>Suppose that there are three groups <code>a</code>, <code>b</code> and <code>c</code> as indicated by the column names. To compare the <code>a</code> samples to the <code>b</code> samples and store the result, call</p>
 <pre class="r"><code>out &lt;- ion$beta_binomial_2g(d,
                             c(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;),

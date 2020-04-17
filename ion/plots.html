@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2020-03-07" />
+
+<title>Data visualization in R</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-111364566-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-111364566-2');
+</script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ION</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="heatmap.html">Heatmap</a>
+</li>
+<li>
+  <a href="plots.html">Plots</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Statistics
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="beta-binomial-test.html">Beta-binomial test</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Data visualization in R</h1>
+<h4 class="author">Thang V Pham</h4>
+<h4 class="date">07 March 2020</h4>
+
+</div>
+
+
+<p>This document serves as a template for several R plotting functions. Adapt the type of visualization you need for your data</p>
+<div id="scatter-plot-and-lines" class="section level2">
+<h2>Scatter plot and lines</h2>
+<pre class="r"><code>plot(c(2, 3, 5, 7, 11), c(2, 6, 7, 1, 4), type = &#39;b&#39;, col = &quot;red&quot;, pch = 19)
+lines(c(2, 3, 5, 7, 11), c(3, 4, 7, 3, 1), type = &#39;l&#39;, col = &quot;green&quot;, pch = 20)
+lines(c(2, 3, 5, 7, 11), c(5, 2, 4, 6, 5), type = &#39;p&#39;, col = &quot;blue&quot;, pch = 21)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-2-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p>A frequently used parameter is <code>pch</code> for the symbol.</p>
+<pre class="r"><code>par(mar = c(0, 0, 0, 0), mfrow = c(5, 6)) # 6 row, 5 columns
+for (j in 0:25) {
+    plot(0, 0, pch = j, cex = 3, col = &quot;steelblue&quot;, axes = FALSE, xlab = &quot;&quot;, ylab = &quot;&quot;)
+    text(0, 0, j, pos = 3, offset = 2, cex = 2)
+}</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-3-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p>Reset the graphics device.</p>
+<pre class="r"><code>dev.off()</code></pre>
+<pre class="r"><code>par(mar = c(0, 0, 0, 0), mfrow=c(7, 1)) # 6 row, 5 columns
+for (j in 0:6) {
+    plot(c(0, 1), c(0, 0), lty = j, type = &quot;l&quot;, lwd = 3, col = &quot;steelblue&quot;, axes = FALSE, xlab = &quot;&quot;, ylab = &quot;&quot;)
+    text(0.5, 0, paste0(&quot;lty = &quot;, j), pos = 3, offset = 1, cex = 2)
+}</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-5-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p>Reset the graphics device.</p>
+<pre class="r"><code>dev.off()</code></pre>
+</div>
+<div id="r-squared" class="section level2">
+<h2>R squared</h2>
+<p>Check <code>?plotmath</code> for displaying mathematics symbols and equation.</p>
+<pre class="r"><code>x &lt;- c(2, 3, 5, 7, 11)
+y &lt;- c(3, 2, 4, 6, 14)
+plot(x, y, type = &#39;p&#39;, col = &quot;blue&quot;, pch = 19)
+m &lt;- lm(y ~ x)
+
+abline(m$coefficients, col = &quot;red&quot;, lwd = 3)
+legend(&quot;topleft&quot;, 
+      legend = bquote(italic(R)^2 == .(sprintf(&quot;%.02f&quot;, summary(m)$r.squared))),
+       bty = &quot;n&quot;)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-7-1.png" width="672" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
+<div id="barplot" class="section level2">
+<h2>Barplot</h2>
+<pre class="r"><code>barplot(c(11, 7, 5, 3, 2), 
+        main = &quot;Performance index&quot;, 
+        horiz =TRUE,
+        las = 1,
+        xlab = &quot;ABCDE&quot;,
+        names.arg = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;),
+        col = &quot;firebrick&quot;,
+        border = NA,
+        cex.names = 2)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-8-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p>A barplot with different spaces between bars.</p>
+<pre class="r"><code>barplot(c(11, 7, 5, 3, 2, 1), 
+        main = &quot;Performance index&quot;, 
+        las = 1,
+        xlab = &quot;ABCDEF&quot;,
+        names.arg = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;, &quot;f&quot;),
+        space = c(0.2, 0.2, 1, 0.2, 1, 0.2),
+        col = &quot;firebrick&quot;,
+        border = NA,
+        cex.names = 2)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-9-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
+<div id="boxplot" class="section level2">
+<h2>Boxplot</h2>
+<pre class="r"><code>dat &lt;- list(v = as.numeric(c(1:6, 1:6 + 3)), 
+            groups = c(rep(&quot;control&quot;, 6), rep(&quot;treated&quot;, 6)))
+
+boxplot(v ~ groups, 
+        data = dat,
+        ylab=&quot;ylab&quot;,
+        main = &quot;Example boxplot&quot;)
+
+stripchart(v ~ groups, vertical = TRUE, data = dat, 
+           method = &quot;jitter&quot;, add = TRUE, pch = 20, col = &quot;blue&quot;, cex = 3)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-10-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>boxplot(1:6,
+        1:6 + 3,
+        1:6 - 3,
+        1:6 - 5,
+        at = c(1,2, 4, 5),
+        names = c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;),
+        col = &quot;lightblue&quot;,
+        whisklty = 1,
+        staplelty = 0)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-11-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
+<div id="matplot" class="section level2">
+<h2>Matplot</h2>
+<p>The matplot function is useful for time-course data.</p>
+<pre class="r"><code>matplot(rbind(1:6, 1:6 + 7), type = &#39;b&#39;, col = 1:6 , pch=19, ylab=&quot;ylab&quot;, lwd = 3, axes = F, main = &quot;Example matplot&quot;, xlab = &quot;xlab&quot;)
+axis(2)
+axis(side=1,at=1:2,labels=c(&quot;control&quot;, &quot;treated&quot;))
+legend(&quot;topleft&quot;, legend = 1:6, col = 1:6, pch=19, bty = &quot;n&quot;)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-12-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
+<div id="basic-heatmap" class="section level2">
+<h2>Basic heatmap</h2>
+<p>We can create a user-defined correlation matrix for clustering.</p>
+<pre class="r"><code>tab &lt;- matrix(c(0, 11, 2, 13, 2, 8, 9, 7, 4, 3, 1, 2, 0, 2, 2, 1), 
+              nrow = 2, 
+              dimnames = list(c(&quot;Yes&quot;, &quot;No&quot;),
+                              paste0(&quot;Group_&quot;, 1:8)))
+print(tab)</code></pre>
+<pre><code>##     Group_1 Group_2 Group_3 Group_4 Group_5 Group_6 Group_7 Group_8
+## Yes       0       2       2       9       4       1       0       2
+## No       11      13       8       7       3       2       2       1</code></pre>
+<pre class="r"><code>res &lt;- matrix(1, nrow = 8, ncol = 8)
+
+tab &lt;- tab + 0.01
+for (i in 1:7) {
+    for (j in (i+1):8) {
+        res[i, j] &lt;-  (tab[1, i] * tab[2, j] - tab[1, j] * tab[2, i]) / sqrt((tab[1, i] + tab[1, j]) * (tab[2, i] + tab[2, j]) * (tab[1, i] + tab[2, i]) * (tab[1, j] + tab[2, j]))
+        res[j, i] &lt;- res[i, j]
+    }
+}
+
+# Get some colors
+col&lt;- colorRampPalette(c(&quot;blue&quot;, &quot;white&quot;, &quot;red&quot;))(20)
+
+heatmap(x = res, col = col, symm = TRUE, labRow = colnames(tab), labCol = colnames(tab))</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-13-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
+<div id="venn-diagram" class="section level2">
+<h2>Venn diagram</h2>
+<pre class="r"><code>par(pty=&quot;s&quot;, mar = c(0, 0, 0, 0))
+plot(c(-2.2, 2.2), c(-2.2, 2.2), asp = 1, type=&#39;n&#39;, axes = FALSE, ann = FALSE)
+
+symbols(x = -0.7, y = 0, circles = 1.5, 
+        inches = FALSE, add = TRUE, lwd =3)
+
+symbols(x = 0.7, y=0, circles = 1.5, 
+        inches = FALSE, add = TRUE, lwd = 3)
+
+text(0, 0, 1, cex = 2)
+text(-1.5, 0, 2, cex = 2)
+text(1.5, 0, 3, cex = 2)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-14-1.png" width="480" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(pty = &quot;s&quot;, mar = c(0, 0, 0, 0))
+plot(c(-2.2, 2.2), c(-2.2, 2.2), asp = 1, type = &#39;n&#39;, axes = FALSE, ann = FALSE)
+
+symbols(x = -0.7, y = 0.7, circles = 1.5, 
+        inches = FALSE, add = TRUE, lwd = 3)
+
+symbols(x = 0.7, y = 0.7, circles = 1.5, 
+        inches = FALSE, add = TRUE, lwd = 3)
+
+symbols(x = 0, y = -0.7, circles = 1.5, 
+        inches = FALSE, add = TRUE, lwd = 3)
+
+text(0, 0.1, 1, cex = 2)
+text(0, 1.3, 2, cex = 2)
+text(0, -1.4, 3, cex = 2)
+
+text(-0.9, -0.3, 4, cex = 2)
+text(0.9, -0.3, 5, cex = 2)
+
+text(-1.4, 1, 6, cex = 2)
+text(1.4, 1, 7, cex = 2)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-15-1.png" width="480" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
+<div id="combining-plots" class="section level2">
+<h2>Combining plots</h2>
+<p>A quick way to place multiple plots in a figure</p>
+<pre class="r"><code>par(mfrow = c(1, 2)) # 1 row, 2 columns
+# plot 1
+plot(c(2, 3, 5, 7, 11), c(2, 6, 7, 1, 4), type = &#39;b&#39;, col = &quot;blue&quot;, pch = 19)
+lines(c(2, 3, 5, 7, 11), c(3, 4, 7, 3, 1), type = &#39;b&#39;, col = &quot;red&quot;, pch = 22)
+# plot 2
+barplot(c(11, 7, 5, 3, 2), 
+        main = &quot;Performance index&quot;, 
+        horiz =TRUE,
+        las = 1,
+        xlab = &quot;ABCDE&quot;,
+        names.arg = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;),
+        col = &quot;firebrick&quot;,
+        border = NA,
+        cex.names = 2)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-17-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p>And a more elaborate method</p>
+<pre class="r"><code>plot.new()
+# plot 1
+par(fig = c(0, 0.4, 0, 1), new = TRUE) # x1, x2, y1, y2
+plot(c(2, 3, 5, 7, 11), c(2, 6, 7, 1, 4), type = &#39;b&#39;, col = &quot;blue&quot;, pch = 19)
+lines(c(2, 3, 5, 7, 11), c(3, 4, 7, 3, 1), type = &#39;b&#39;, col = &quot;red&quot;, pch = 22)
+
+# plot 2
+par(fig = c(0.4, 1, 0, 1), new = TRUE)
+barplot(c(11, 7, 5, 3, 2), 
+        main = &quot;Performance index&quot;, 
+        horiz =TRUE,
+        las = 1,
+        xlab = &quot;ABCDE&quot;,
+        names.arg = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;),
+        col = &quot;firebrick&quot;,
+        border = NA,
+        cex.names = 2)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-18-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p>Close the device and reset the graphics device’s parameters.</p>
+<pre class="r"><code>dev.off()</code></pre>
+</div>
+<div id="graphics-devices" class="section level2">
+<h2>Graphics devices</h2>
+<p>A frequently used function pair is <code>pdf()</code> and <code>dev.off()</code>. The function <code>pdf()</code> tells R to direct the graphics to a pdf file. The funtion <code>dev.off()</code> tells R to close the file. If in the middle you have done something wrong, do not panic. Call <code>dev.off()</code> several times and start over.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
