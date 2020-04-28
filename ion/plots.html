@@ -491,9 +491,9 @@ axis(side=1,at=1:2,labels=c(&quot;control&quot;, &quot;treated&quot;))
 legend(&quot;topleft&quot;, legend = 1:6, col = 1:6, pch=19, bty = &quot;n&quot;)</code></pre>
 <p><img src="plots_files/figure-html/unnamed-chunk-12-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
-<div id="basic-heatmap" class="section level2">
-<h2>Basic heatmap</h2>
-<p>We can create a user-defined correlation matrix for clustering.</p>
+<div id="correlation-plot" class="section level2">
+<h2>Correlation plot</h2>
+<p>First we create a user-defined correlation matrix. We can then show a correlation plot using the basic <code>heatmap()</code> function.</p>
 <pre class="r"><code>tab &lt;- matrix(c(0, 11, 2, 13, 2, 8, 9, 7, 4, 3, 1, 2, 0, 2, 2, 1), 
               nrow = 2, 
               dimnames = list(c(&quot;Yes&quot;, &quot;No&quot;),
@@ -517,6 +517,21 @@ col&lt;- colorRampPalette(c(&quot;blue&quot;, &quot;white&quot;, &quot;red&quot;
 
 heatmap(x = res, col = col, symm = TRUE, labRow = colnames(tab), labCol = colnames(tab))</code></pre>
 <p><img src="plots_files/figure-html/unnamed-chunk-13-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p>Another tool is the <code>corrplot</code> package. One can install this package from a standard R distribution <code>install.packages("corrplot")</code>.</p>
+<pre class="r"><code>colnames(res) &lt;- colnames(tab)
+rownames(res) &lt;- colnames(tab)
+corrplot::corrplot(res, number.cex = .7, method = &quot;number&quot;)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-14-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
+<div id="density-plot" class="section level2">
+<h2>Density plot</h2>
+<pre class="r"><code>v &lt;- c(0.9477538, 0.9592793, 0.8016799, 0.8054666,
+       0.8162191, 0.8305740, 0.8251865, 0.8092851,
+       0.8098058, 0.7786652, 0.7820299, 0.8316563)
+d &lt;- density(v)
+plot(d, main=&quot;Distribution&quot;, xlim = c(0, 1))
+polygon(d, col=&quot;lightblue&quot;, border=&quot;lightblue&quot;)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-15-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="venn-diagram" class="section level2">
 <h2>Venn diagram</h2>
@@ -532,7 +547,7 @@ symbols(x = 0.7, y=0, circles = 1.5,
 text(0, 0, 1, cex = 2)
 text(-1.5, 0, 2, cex = 2)
 text(1.5, 0, 3, cex = 2)</code></pre>
-<p><img src="plots_files/figure-html/unnamed-chunk-14-1.png" width="480" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="plots_files/figure-html/unnamed-chunk-16-1.png" width="480" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(pty = &quot;s&quot;, mar = c(0, 0, 0, 0))
 plot(c(-2.2, 2.2), c(-2.2, 2.2), asp = 1, type = &#39;n&#39;, axes = FALSE, ann = FALSE)
 
@@ -554,7 +569,7 @@ text(0.9, -0.3, 5, cex = 2)
 
 text(-1.4, 1, 6, cex = 2)
 text(1.4, 1, 7, cex = 2)</code></pre>
-<p><img src="plots_files/figure-html/unnamed-chunk-15-1.png" width="480" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="plots_files/figure-html/unnamed-chunk-17-1.png" width="480" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 </div>
 <div id="combining-plots" class="section level2">
 <h2>Combining plots</h2>
@@ -573,7 +588,7 @@ barplot(c(11, 7, 5, 3, 2),
         col = &quot;firebrick&quot;,
         border = NA,
         cex.names = 2)</code></pre>
-<p><img src="plots_files/figure-html/unnamed-chunk-17-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="plots_files/figure-html/unnamed-chunk-19-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 <p>And a more elaborate method</p>
 <pre class="r"><code>plot.new()
 # plot 1
@@ -592,7 +607,7 @@ barplot(c(11, 7, 5, 3, 2),
         col = &quot;firebrick&quot;,
         border = NA,
         cex.names = 2)</code></pre>
-<p><img src="plots_files/figure-html/unnamed-chunk-18-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+<p><img src="plots_files/figure-html/unnamed-chunk-20-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
 <p>Close the device and reset the graphics device’s parameters.</p>
 <pre class="r"><code>dev.off()</code></pre>
 </div>
