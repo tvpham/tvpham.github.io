@@ -320,10 +320,11 @@ ion$impute <- function(d, method = "constant", value = 0, seed = 1203) {
 ion$load <- function(filename,
                      # a tab-deliminated text file with a header line
                      col_names = NULL,
+                     stringsAsFactors = FALSE,
                      ...
                      ) {
     if (is.null(col_names)) {
-        return(read.delim(filename, quote = "", ...))
+        return(read.delim(filename, quote = "", stringsAsFactors = stringsAsFactors, ...))
     } else {
         h <- read.delim(filename, nrow = 1)
         
@@ -338,7 +339,7 @@ ion$load <- function(filename,
         names(v) <- colnames(h)
         v[col_names] <- NA
         
-        return(read.delim(filename, colClasses = v))
+        return(read.delim(filename, colClasses = v, stringsAsFactors = stringsAsFactors))
     }
 }
 
@@ -596,6 +597,7 @@ ion$wilcox_test <- function(dat, group1, group2, paired = FALSE) {
 
     for (r in (1:N)) {
         x <- as.numeric(dat[r, group1])
+        y <- as.numeric(dat[r, group2])
 
         # calculate FC in case the test fails
         logFC[r] <- mean(y, na.rm = TRUE) - mean(x, na.rm = TRUE)
