@@ -535,6 +535,32 @@ ion$limma_F <- function(dat, groups) {
                  pval.BH = ion$impute(p.adjust(pval, method = "BH"), value = 1.0)))
 }
 
+## anova
+ion$anova_subject_time <- function(mat, subjects, time_points) {
+    
+    pval <- rep(NA, nrow(mat))
+    
+    for (i in 1:nrow(mat)) {
+        try({
+            ds = list(y = as.numeric(mat[i, ]), subjects = subjects , time_points = time_points)
+            
+            tmp1 <- lm(y ~ 0 + subjects + time_points, data = ds)
+            
+            tmp2 <- lm(y ~ 0 + subjects, data = ds)
+            
+            pval[i] <- anova(tmp2, tmp1, test = "Chisq")[2, "Pr(>Chi)"]
+        },
+        silent = TRUE)
+    }
+
+    p.BH <- pval
+    p.BH[!is.na(pval)] <- p.adjust(pval[!is.na(pval)], method = "BH")
+    
+    return (list(dd = mat,
+                 pval = ion$impute(pval, value = 1.0),
+                 pval.BH = ion$impute(p.BH, value = 1.0)))
+}
+
 ## t-test
 
 ion$t_test <- function(dat, group1, group2, paired = FALSE) {
