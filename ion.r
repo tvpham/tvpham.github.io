@@ -536,21 +536,37 @@ ion$limma_F <- function(dat, groups) {
 }
 
 ## anova
-ion$anova_subject_time <- function(mat, subjects, time_points) {
+ion$anova_subject_time <- function(mat, subjects, time_points, random_effect = TRUE) {
     
     pval <- rep(NA, nrow(mat))
     
-    for (i in 1:nrow(mat)) {
-        try({
-            ds = list(y = as.numeric(mat[i, ]), subjects = subjects , time_points = time_points)
+    if (random_effect) {
+        
+        library(lme4)
+        
+        for (i in 1:nrow(mat)) {
+            try({
+                ds = list(y = as.numeric(mat[i, ]), subjects = subjects , time_points = time_points)
+                
+                m1 <- lmer(y ~ time_points + (1|subjects), ds, REML = FALSE)
+                m2 <- lmer(y ~ (1|subjects), ds, REML = FALSE)
+        
+                pval[i] <- anova(m2, m1, test = "Chisq")[2, "Pr(>Chisq)"]
             
-            tmp1 <- lm(y ~ 0 + subjects + time_points, data = ds)
+            }, silent = TRUE)
+        }
+    } else {
+        for (i in 1:nrow(mat)) {
+            try({
+                ds = list(y = as.numeric(mat[i, ]), subjects = subjects , time_points = time_points)
+                
+                m1 <- lm(y ~ 0 + subjects + time_points, data = ds)
             
-            tmp2 <- lm(y ~ 0 + subjects, data = ds)
+                m2 <- lm(y ~ 0 + subjects, data = ds)
             
-            pval[i] <- anova(tmp2, tmp1, test = "Chisq")[2, "Pr(>Chi)"]
-        },
-        silent = TRUE)
+                pval[i] <- anova(m2, m1, test = "Chisq")[2, "Pr(>Chi)"]
+            }, silent = TRUE)
+        }
     }
 
     p.BH <- pval
