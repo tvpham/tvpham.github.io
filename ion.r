@@ -536,7 +536,7 @@ ion$limma_F <- function(dat, groups) {
 }
 
 ## anova
-ion$anova_subject_time <- function(mat, subjects, time_points, random_effect = TRUE) {
+ion$anova_subject_time <- function(mat, subjects, time_points, random_effect = FALSE) {
     
     pval <- rep(NA, nrow(mat))
     
@@ -560,9 +560,9 @@ ion$anova_subject_time <- function(mat, subjects, time_points, random_effect = T
             try({
                 ds = list(y = as.numeric(mat[i, ]), subjects = subjects , time_points = time_points)
                 
-                m1 <- lm(y ~ 0 + subjects + time_points, data = ds)
+                m1 <- lm(y ~ subjects + time_points, data = ds)
             
-                m2 <- lm(y ~ 0 + subjects, data = ds)
+                m2 <- lm(y ~ subjects, data = ds)
             
                 pval[i] <- anova(m2, m1, test = "Chisq")[2, "Pr(>Chi)"]
             }, silent = TRUE)
