@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="/hanoilang.css">
+    </head>
+    <body>
+		<div class="flexbox">
+			<header>
+	        	<svg width="64" height="64"  align="center">
+                    <g>
+                        <rect stroke="#00007f" id="matrix1" height="40" width="40" y="20" x="20" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" fill="#00007f"/>
+                        <rect stroke-width="0" id="matrix2" height="28" width="28" y="26" x="26" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#ffff00" fill="#ffff00"/>
+                        <line id="col1" y2="2" x2="42" y1="17" x1="27" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="4" stroke="#ff0000" fill="none"/>
+                        <line id="col2" y2="2" x2="39.2" y1="17" x1="54.2" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="4" stroke="#ff0000" fill="none"/>
+                        <line id="row1" y2="27" x2="17" y1="42" x1="2" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="4" stroke="#00ff00" fill="none"/>
+                        <line id="row2" y2="39.2" x2="2" y1="54.2" x1="17" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="4" stroke="#00ff00" fill="none"/>
+                    </g>
+                </svg>
+	        	<div class="headtext">The Hanoi programming language</div>
+            </header>
+            
+			<div class="navrow">
+				<div class="nav"><a class="active" href="." id="Language">Language</a></div>
+  	        	<div class="nav"><a href="./lib">Libraries</a></div>
+	        	<div class="nav"><a href="./examples">Examples</a></div>
+	        	<div class="nav"><a href="./tools">Tools</a></div>
+	        	<div class="nav"><a href="./news">News</a></div>
+	    	</div>
+
+	    <div class="mainrow">
+	        <div class="content">
+
+                    <p>Hanoi is a programming language that is</p>
+
+                    <ul>
+                        <li><em>concise</em>. Only frequently used data types are included, namely string, integer, real, logical, and functional.</li>
+                        <li><em>intuitive</em>. A data matrix may have row names and column names. A map contains variables of different types. Functions are with named parameters, and thus no need for comprehensive documentation.</li>
+                        <li><em>scalable</em>. Your code is ready for big time, i.e. easily translated to C/C++. Matrix indices start from 0.  Concurrent programming constructs mean fewer occasions when 11 out  of 12 cores sitting idle leaving one doing all the hard work.</li>
+                    </ul>
+
+                    <p>The syntax should be familiar to most programmers. Have a look at some examples, download the console, and you are ready to go.</p>
+
+                    <p><strong>Identifiers</strong></p>
+
+                    <ol>
+                        <li><code>""</code> | <code>``</code> string literals
+                            <ul>
+                                <li>"hello, world"</li>
+                                <li>&#96;raw\tstring&#96; // == "raw\\tstring"</li>
+                            </ul></li>
+                        <li>integer literals (base10, C++ syntax)
+                            <ul>
+                                <li>2016; -1 </li>
+                            </ul></li>
+                        <li>real numbers, floating point literals (C++ syntax)
+                            <ul>
+                                <li>3.14; -1.0; 1e06; .5</li>
+                            </ul></li>
+                        <li><code>true</code> | <code>false</code> logical values
+                            <ul>
+                                <li>0 > 1 // == false</li>
+                            </ul></li>
+                        <li><code>@()</code> functions
+                            <ul>
+                                <li>@(a, b = 1)  a + b</li>
+                            </ul></li>
+                        <li><code>if</code> | <code>else</code> | <code>for</code> | <code>do</code> | <code>while</code>| <code>continue</code> | <code>break</code> | <code>return</code> flow controls
+                            <ul>
+                                <li>for (a : ["Hello", "world"]) print (a)</li>
+                            </ul></li>
+                        <li>variable names containing alphanumeric characters or "_", and not starting with a digit.
+                            <ul>
+                                <li>a  = sqrt(b0 * b0 + _c * _c)</li>
+                            </ul></li>
+                    </ol>
+
+                    <p><strong>Operators</strong></p>
+
+                    <ol>
+                        <li>unary <code>||</code> parallel execution</li>
+                        <li><code>=</code> assignment</li>
+                        <li>compound assignments
+                            <ul>
+                                <li><code>+=</code> plus, <code>-=</code> minus, <code>*=</code> multiply, <code>/=</code> divide, <code>%=</code> remainder, <code>&amp;=</code> and,  <code>|=</code> or, <code>^=</code> reshape, <code>^^</code> colnames, <code>&lt;&lt;</code> rownames</li>
+                            </ul></li>
+                        <li>branching
+                            <ul>
+                                <li><code>?,</code> ternary conditional, string substitute</li>
+                                <li><code>?, ~</code> case switch</li>
+                            </ul></li>
+                        <li><code>.</code> map reference</li>
+                        <li><code>;</code> row bind</li>
+                        <li><code>,</code> column bind, map concatenate</li>
+                        <li>matrix manipulation
+                            <ul>
+                                <li><code>#</code> matrix replicate</li>
+                                <li><code>^</code> matrix reshape, string match capture</li>
+                            </ul></li>
+                        <li><code>||</code> short-circuit or</li>
+                        <li><code>&amp;&amp;</code> short-circuit and</li>
+                        <li><code>|</code> logical or, string match</li>
+                        <li><code>&amp;</code> logical and, string intersection</li>
+                        <li><code>==</code> equal, <code>!=</code> not equal</li>
+                        <li><code>&gt;</code> greater , <code>&gt;=</code> greater or equal, <code>&lt;</code> less than, <code>&lt;=</code> less than or equal</li>
+                        <li><code>:</code> sequence</li>
+                        <li>addition, subtraction
+                            <ul>
+                                <li><code>+</code> numeric addition, string at</li>
+                                <li><code>-</code> numeric subtraction, string substring</li>
+                            </ul></li>
+                        <li>multiplication, division
+                            <ul>
+                                <li><code>*</code> numeric multiplication, string join</li>
+                                <li><code>/</code> numeric division, string split</li>
+                                <li><code>%</code> integral remainder, string grep</li>
+                            </ul></li>
+                        <li>unary operators
+                            <ul>
+                                <li><code>+</code> numerical sum, string concatenate, logical any </li>
+                                <li><code>-</code> numerical negate, string reverse</li>
+                                <li><code>*</code> string length, logical all</li>
+                                <li><code>!</code> string trim, logical negate</li>
+                            </ul></li>
+                        <li><code>'</code> transpose</li>
+                        <li><code>()</code> function call, <code>[]</code> slice, <code>[~;~]</code> slice with negation</li>
+                        <li>unary matrix operators
+                            <ul>
+                                <li><code>&lt;</code> row names</li>
+                                <li><code>^</code> column names</li>
+                                <li><code>#</code> number of elements</li>
+                                <li><code>&amp;</code> as string</li>
+                                <li><code>%</code> as integer</li>
+                                <li><code>/</code> as real</li>
+                            </ul></li>
+                    </ol>
+
+                    <!-- end -->
+
+	        </div>
+                
+		<!--
+	             <div>
+		     <svg width="300" height="600" style="float:left">
+                     <g>
+                     <rect stroke="#00007f" id="matrix1" height="600" width="300" y="0" x="0" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" fill="#00007f"/>
+                     </g>
+                     </svg>
+		     </div>
+		   -->
+	    </div>
+            <footer>&copy; 2018 Thang V. Pham, all rights reserved.</footer>
+        </div>
+    </body>
+</html>
+

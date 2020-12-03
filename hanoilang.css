@@ -1,0 +1,80 @@
+.flexbox {display: flex;width: 100%;background-color: white;flex-direction: column;}
+.headtext {float: left;margin: 1em;}
+/*
+.r { border-left:4px solid seagreen; padding: 10px;}
+.vline {position: absolute;top: 100px;left: 840px;height: 200px;width: 10px;overflow-y: auto;border-right: 2px solid black;}
+*/
+/*
+.row {display: -webkit-flex;display: flex;}
+.row400a {display: -webkit-flex;display: flex;margin: 20px;flex-direction: row; width: 100%;}
+*/
+.navrow {display: -webkit-flex;display: flex;margin: 20px;flex-direction: row; width: 400px;}
+
+.active {color: white;background-color: grey;border-radius: 5px;font-size: 1em;padding:2px 2px 2px 2px;text-decoration: none;display:block;margin: 2px;}
+
+.nav {-webkit-flex: 1 0 auto;flex: 1 0 auto;text-align: center;}
+.nav a:link:not(.active), .nav a:active:not(.active), .nav a:visited:not(.active) {color: black;font-size: 1em;padding:2px 2px 2px 2px;text-decoration: none;display:block;margin: 2px;}
+.nav a:hover:not(.active) {color: white;font-size: 1em;background-color: lightgrey;border-radius: 5px;display:block;margin: 2px;}
+
+.mainrow {border-top: 2px solid black; padding: 10px;display: -webkit-flex;display: flex;flex-wrap: wrap; flex-direction: row; background-color: white;}
+.content {text-align: left;padding: 10px 10px;margin-right: 25px;max-width: 800px;}
+
+footer {background: white;color:black; text-align: left; border-top: 1px solid black; padding: 10px}
+header {background: white;color:black; text-align: left; padding: 10px; font-size: 120%; font-weight:bold; margin: 0px; display:flex; align-items: center}
+/*header0 {background: white;color:black; text-align: left; padding: 10px; font-size: 120%; font-weight:bold; margin: 0px; display:flex; align-items: center}
+ */
+
+/*
+.table-of-contents {padding: 10px; }
+.nav0 {-webkit-flex: 0 0 auto;flex: 0 0 auto;text-align: center;}
+.nav0 a:link:not(.active), .nav0 a:active:not(.active), .nav0 a:visited:not(.active) {color: black;font-size: 1em;padding:2px 2px 2px 2px;text-decoration: none;display:block;margin: 2px;}
+.nav0 a:hover:not(.active) {color: white;font-size: 1em;background-color: lightgrey;border-radius: 5px;display:block;margin: 2px;}
+
+.nav1 a:link:not(.active), .nav0 a:active:not(.active), .nav0 a:visited:not(.active) {color: green;font-size: 1em;padding:2px 2px 2px 2px;text-decoration: none;display:block;margin: 2px;}
+.nav1 a:hover:not(.active) {color: white;font-size: 1em;background-color: grey;border-radius: 5px;display:block;margin: 2px;}
+.nav1 a:link {color: green;}
+.nav1 a:visited {color: green;}
+.nav1 a:hover {color: white;background-color: grey;border-radius: 5px;display:block;margin: 2px;}
+.nav1 a:active {color: green;}
+*/
+
+h1 {
+  font-size: 30px;
+}
+h1.title {
+  font-size: 34px;
+}
+h2 {
+  font-size: 24px;
+}
+h3 {
+  font-size: 18px;
+}
+h4 {
+  font-size: 16px;
+}
+h5 {
+  font-size: 14px;
+}
+h6 {
+  font-size: 12px;
+}
+body{
+	font-size:16px;
+	line-height:1.6;
+}
+
+code {
+	font-family: monospace;
+	color:firebrick;
+}
+
+@media screen and (max-width: 40em) {
+    .content {width: 100%;}
+    .navrow {flex-direction: column;width: 100%;margin: 0px;}
+    /*.row {flex-direction: column;}
+    .vline {border-style:none;}*/
+    header {  flex-direction: column; }
+    .headtext {fnt-size: 4.4vw;}
+}
+
