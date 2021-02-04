@@ -12,7 +12,7 @@ ion <- list()
 
 ion$heatmap <- function(d,
                         # a numeric matrix to show in the heatmap
-                        
+
                         color = c("#4292C6", "#519CCC", "#61A7D2", "#72B1D7", "#85BCDB",
                                   "#98C7DF", "#A9CEE4", "#B8D5EA", "#C6DBEF", "#CFE1F2",
                                   "#D9E7F5", "#E2EDF8", "#EBF3FB", "#F5F9FE", "#F9F9F8",
@@ -20,88 +20,88 @@ ion$heatmap <- function(d,
                                   "#FDD9B4", "#FDD0A3", "#FDC48F", "#FDB77A", "#FDAA66",
                                   "#FD9E54", "#FD9142", "#FA8432", "#F57622", "#F16913"),
                         # heatmap color, e.g. colorRampPalette(c("white", "Orange"))(32), rev(heat.colors(32)), or bluered(59), or c(colorRampPalette(c("blue", "white"))(30), colorRampPalette(c("white", "red"))(30)[-1])
-                        
+
                         color_min = NULL,
                         # values below this value will get the first color value, default minimum of d_heatmap
-                        
+
                         color_max = NULL,
                         # values above this value will get the last color value, default maximum of d_heatmap
-                        
+
                         z_transform = "row",
                         # set this to "col", "row", or "none".
-                        
-                        
+
+
                         #--- COLUMNS ---
-                        
+
                         col_data = NA,
                         # data for column clustering, use d if NA
-                        
+
                         col_distance = "euclidean",
                         # distance for column clustering, e.g. "pearson" = 1-Pearson correlation, "spearman" = 1-Spearman correlation, "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski".
-                        
+
                         col_linkage = "complete",
                         # linkage for column clustering, e.g. "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC)
-                        
+
                         col_reorder = TRUE,
                         # reorder column as input while maintaining the tree structure
-                        
+
                         col_labels = NULL,
                         # column labels, e.g. colnames(d_heatmap),
-                        
+
                         col_label_colors = NULL,
                         # column labels colors
-                        
+
                         col_label_rotated = 90,
                         # degree of labels rotation
-                        
+
                         col_color_bar = NULL,
                         # a list of color vectors, each vector for a bar
-                        
+
                         col_colors = NULL,
                         # a vector of colors
-                        
+
                         row_colors = NULL,
                         # a vector of colors
-                        
+
                         col_margin = 0.5,
                         # margin for column labels
-                        
+
                         #--- ROW ---
-                        
+
                         row_data = NA,
                         # data for row clustering, use d if NA
-                        
+
                         row_distance = "euclidean",
                         # "pearson", "spearman", "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski".
-                        
+
                         row_linkage = "complete",
                         # "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC)
-                        
+
                         row_reorder = TRUE,
                         # see column
-                        
+
                         row_labels = NULL,
                         # see column, rownames(d_heatmap),
-                        
+
                         row_label_colors = NULL,
                         # see column
-                        
+
                         row_margin = 0.5,
                         # see column
-                        
-                        
+
+
                         #--- OTHERS ---
-                        
+
                         color_key_margins = NULL,
                         # margins of the color key, default c(5, 1, 0.5, 2) if NULL
-                        
+
                         separator = FALSE,
                         # a separator between cells
-                    
+
                         ...) {
-    
+
     zscore <- z_transform != "none"
-    
+
     if (z_transform == "row") {
         message("\nRows are tranformed into z-values\n\n")
         d_heatmap <- t(scale(t(d)))
@@ -113,13 +113,13 @@ ion$heatmap <- function(d,
             d_heatmap <- d
         }
     }
-    
+
     if (!is.null(col_data)) {
-        
+
         if (identical(col_data, NA)) {
             col_data <- d_heatmap
         }
-        
+
         if (col_distance == "pearson") {
             col_dist <- as.dist(1 - cor(col_data, method = "pearson", use = "pairwise.complete.obs"))
             message("Using (1 - Pearson correlation) as distance for columns.\n")
@@ -130,30 +130,30 @@ ion$heatmap <- function(d,
             col_dist <- dist(t(col_data), method = col_distance)
             message("Using ", col_distance, " distance for columns.\n")
         }
-        
+
         if (sum(is.na(col_dist)) > 0) {
             message("\n=== NA values in col distance matrix ===\n")
             col_dist[is.na(col_dist)]  <-  max(col_dist, na.rm =  TRUE)
         }
-        
+
         col_tree <- hclust(col_dist, method = col_linkage)
         message("Using ", col_linkage, " linkage for columns.\n")
-        
+
         if (col_reorder) {
             col_clustering <- reorder(as.dendrogram(col_tree), 1:ncol(as.matrix(col_dist)), agglo.FUN = mean)
         } else {
             col_clustering <- as.dendrogram(col_tree)
         }
     }
-    
+
     message("\n")
-    
+
     if (!is.null(row_data)) {
-        
+
         if (identical(row_data, NA)) {
             row_data <- d_heatmap
         }
-        
+
         if (row_distance == "pearson") {
             row_dist <- as.dist(1 - cor(t(row_data), method = "pearson", use = "pairwise.complete.obs"))
             message("Using (1 - Pearson correlation) as distance for rows.\n")
@@ -164,15 +164,15 @@ ion$heatmap <- function(d,
             row_dist <- dist(row_data, method = row_distance)
             message("Using ", row_distance, " distance for rows.\n")
         }
-        
+
         if (sum(is.na(row_dist)) > 0) {
             message("\n=== NA values in row distance matrix ===\n")
             row_dist[is.na(row_dist)]  <-  max(row_dist, na.rm =  TRUE)
         }
-        
+
         row_tree <- hclust(row_dist, method = row_linkage)
         message("Using ", row_linkage, " linkage for rows.\n")
-        
+
         if (row_reorder) {
             row_clustering <- reorder(as.dendrogram(row_tree), 1:ncol(as.matrix(row_dist)), agglo.FUN = mean)
         }
@@ -180,25 +180,25 @@ ion$heatmap <- function(d,
             row_clustering <- as.dendrogram(row_tree)
         }
     }
-    
+
     message("\n")
-    
+
     colsep  <- seq(1, ncol(d_heatmap))
     rowsep  <- seq(1, nrow(d_heatmap))
-    
+
     sepcolor  <-  "grey100"
     sepwidth  <-  c(0.02, 0.02)
-    
-    
+
+
     if (!separator) {
         colsep <- NULL
         rowsep <- NULL
         sepcolor <- NULL
         sepwidth <- NULL
     }
-    
+
     col_color_bar_matrix  <-  NULL
-    
+
     if (!is.null(col_color_bar)) {
         col_color_bar_matrix <- as.matrix(as.data.frame(col_color_bar))
         colnames(col_color_bar_matrix) <- names(col_color_bar)
@@ -206,7 +206,7 @@ ion$heatmap <- function(d,
             col_color_bar_matrix <- col_color_bar_matrix[, ncol(col_color_bar_matrix):1]
         }
     }
-    
+
     if (is.null(col_data)) {
         if (is.null(row_data)) {
             dendrogram = "none"
@@ -220,39 +220,39 @@ ion$heatmap <- function(d,
             dendrogram = "both"
         }
     }
-    
+
     ion$.heatmap.2_gplots.3.0.1_modified(as.matrix(d_heatmap),
                                          dendrogram = dendrogram,
                                          Colv = if (is.null(col_data)) FALSE else col_clustering,
                                          Rowv = if (is.null(row_data)) FALSE else row_clustering,
                                          col = color,
                                          breaks = if (zscore) seq(-2, 2, length.out = (length(color) + 1)) else seq(ifelse(is.null(color_min), min(d_heatmap, na.rm = TRUE), color_min), ifelse(is.null(color_max), max(d_heatmap, na.rm = TRUE), color_max), length.out = (length(color) + 1)),
-                                         
+
                                          colsep = colsep,
                                          rowsep = rowsep,
                                          sepcolor = sepcolor,
                                          sepwidth = sepwidth,
-                                         
+
                                          scale = "none",
                                          symkey = zscore,
                                          density.info = "none",
                                          trace = "none",
                                          margins = c(col_margin, row_margin),
-                                         
+
                                          labRow = if (is.null(row_labels)) "" else row_labels,
                                          labCol = if (is.null(col_labels)) "" else col_labels,
-                                         
+
                                          ColSideColors = if (is.null(col_colors)) col_color_bar_matrix else col_colors,
-                                         
+
                                          RowSideColors = row_colors,
-                                         
+
                                          colRow = row_label_colors,
                                          colCol = col_label_colors,
-                                         
+
                                          srtCol = col_label_rotated,
-                                         
+
                                          key_margins = if (is.null(color_key_margins)) c(dev.size("in")[2]+0.5, 1, 0.5, 2) else color_key_margins,
-                                         
+
                                          ...)
 }
 
@@ -263,7 +263,7 @@ ion$normalize_global <- function(d, total_count = NULL) {
     total <- if (is.null(total_count)) apply(d, 2, sum) else total_count
 
     m <- mean(total)
-    factor <- total / m;
+    factor <- total / m
 
     tmp <-  d / (matrix(1, nrow(d), 1) %*% factor)
 
@@ -327,18 +327,18 @@ ion$load <- function(filename,
         return(read.delim(filename, quote = "", stringsAsFactors = stringsAsFactors, ...))
     } else {
         h <- read.delim(filename, nrow = 1)
-        
+
         a <- setdiff(col_names, colnames(h))
-        
+
         if (length(a) > 0) {
             message(paste("Column not available:", a, "\n"))
             return(NULL)
         }
-        
+
         v <- rep("NULL", ncol(h))
         names(v) <- colnames(h)
         v[col_names] <- NA
-        
+
         return(read.delim(filename, colClasses = v, stringsAsFactors = stringsAsFactors))
     }
 }
@@ -537,33 +537,33 @@ ion$limma_F <- function(dat, groups) {
 
 ## anova
 ion$anova_subject_time <- function(mat, subjects, time_points, random_effect = FALSE) {
-    
+
     pval <- rep(NA, nrow(mat))
-    
+
     if (random_effect) {
-        
+
         library(lme4)
-        
+
         for (i in 1:nrow(mat)) {
             try({
                 ds = list(y = as.numeric(mat[i, ]), subjects = subjects , time_points = time_points)
-                
+
                 m1 <- lmer(y ~ time_points + (1|subjects), ds, REML = FALSE)
                 m2 <- lmer(y ~ (1|subjects), ds, REML = FALSE)
-        
+
                 pval[i] <- anova(m2, m1, test = "Chisq")[2, "Pr(>Chisq)"]
-            
+
             }, silent = TRUE)
         }
     } else {
         for (i in 1:nrow(mat)) {
             try({
                 ds = list(y = as.numeric(mat[i, ]), subjects = subjects , time_points = time_points)
-                
+
                 m1 <- lm(y ~ subjects + time_points, data = ds)
-            
+
                 m2 <- lm(y ~ subjects, data = ds)
-            
+
                 pval[i] <- anova(m2, m1, test = "Chisq")[2, "Pr(>Chi)"]
             }, silent = TRUE)
         }
@@ -571,7 +571,7 @@ ion$anova_subject_time <- function(mat, subjects, time_points, random_effect = F
 
     p.BH <- pval
     p.BH[!is.na(pval)] <- p.adjust(pval[!is.na(pval)], method = "BH")
-    
+
     return (list(dd = mat,
                  pval = ion$impute(pval, value = 1.0),
                  pval.BH = ion$impute(p.BH, value = 1.0)))
@@ -718,14 +718,14 @@ ion$fold_change <- function(c1, c2, BIG = 1e4) {
 
 ion$beta_binomial_2g <- function(dat, group1, group2, total_count = NULL) {
 
-    require(ibb)
+    require(countdata)
 
     d <- dat[, c(group1, group2)]
 
-    out <- bb.test(d,
-                   if (is.null(total_count)) colSums(d) else total_count,
-                   c(rep("a", length(group1)), rep("b", length(group2))),
-                   n.threads = -1)
+    out <- countdata::bb.test(d,
+                              if (is.null(total_count)) colSums(d) else total_count,
+                              c(rep("a", length(group1)), rep("b", length(group2))),
+                              n.threads = -1)
 
     d.norm <- ion$normalize_global(d, total_count)
 
@@ -736,39 +736,30 @@ ion$beta_binomial_2g <- function(dat, group1, group2, total_count = NULL) {
 
 ion$beta_binomial_2g_paired <- function(dat, group1, group2, total_count = NULL, BIG = 1e4) {
 
-    require(ibb)
+    require(countdata)
 
     d <- dat[, c(group1, group2)]
 
-    out <- ibb.test(d,
-                    if (is.null(total_count)) colSums(d) else total_count,
-                    c(rep("a", length(group1)), rep("b", length(group2))),
-                    n.threads = -1)
+    out <- countdata::ibb.test(d,
+                               if (is.null(total_count)) colSums(d) else total_count,
+                               c(rep("a", length(group1)), rep("b", length(group2))),
+                               n.threads = -1, BIG = BIG)
 
-    fc <- out$fc
-
-    total_g1 <- if (length(group1) > 1) rowSums(d[, group1]) else d[, group1]
-    total_g2 <- if (length(group2) > 1) rowSums(d[, group2]) else d[, group2]
-
-    fc[total_g1 == 0] <- fc[total_g1 == 0]*0 + BIG
-    fc[total_g2 == 0] <- fc[total_g2 == 0]*0 - BIG
-    fc[total_g1 == 0 & total_g2 == 0] <- 1
-
-    return (list(fc = fc,
+    return (list(fc = out$fc,
                  pval = out$p.value,
                  pval.BH = p.adjust(out$p.value, method = "BH")))
 }
 
 ion$beta_binomial_3g <- function(dat, group1, group2, group3, total_count = NULL) {
 
-    require(ibb)
+    require(countdata)
 
     d <- dat[, c(group1, group2, group3)]
 
-    out <- bb.test(d,
-                  if (is.null(total_count)) colSums(d) else total_count,
-                  c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3))),
-                  n.threads = -1)
+    out <- countdata::bb.test(d,
+                              if (is.null(total_count)) colSums(d) else total_count,
+                              c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3))),
+                              n.threads = -1)
 
     return (list(pval = out$p.value,
                  pval.BH = p.adjust(out$p.value, method = "BH")))
@@ -776,14 +767,14 @@ ion$beta_binomial_3g <- function(dat, group1, group2, group3, total_count = NULL
 
 ion$beta_binomial_4g <- function(dat, group1, group2, group3, group4, total_count = NULL) {
 
-    require(ibb)
+    require(countdata)
 
     d <- dat[, c(group1, group2, group3, group4)]
 
-    out <- bb.test(d,
-                   if (is.null(total_count)) colSums(d) else total_count,
-                   c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3)), rep("d", length(group4))),
-                   n.threads = -1)
+    out <- countdata::bb.test(d,
+                              if (is.null(total_count)) colSums(d) else total_count,
+                              c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3)), rep("d", length(group4))),
+                              n.threads = -1)
 
     return (list(pval = out$p.value,
                  pval.BH = p.adjust(out$p.value, method = "BH")))
@@ -1056,9 +1047,9 @@ ion$.heatmap.2_gplots.3.0.1_modified <- function (x, Rowv = TRUE, Colv = if (sym
         #        1)
         #    lhei <- c(lhei[1], 0.2, lhei[2])
         #}
-        
+
         # Thang END
-        
+
         # Thang
         #if (!missing(RowSideColors)) {
         if (!is.null(RowSideColors)) {
@@ -1104,9 +1095,9 @@ if (!is.matrix(ColSideColors)) {
 else{
     par(mar = c(0.5, 0, 0, margins[2]))
     csc = matrix(ColSideColors[colInd, ], nrow = length(colInd))
-    
+
     csc_Thang <- matrix(0, nrow = dim(csc)[1], ncol = dim(csc)[2])
-    
+
     csc.colors = matrix()
     csc.names = names(table(csc))
     csc.i = 1
@@ -1117,7 +1108,7 @@ else{
     }
     #csc = matrix(as.numeric(csc), nrow = dim(csc)[1])
     csc <- csc_Thang
-    
+
 a <- as.vector(csc.colors)
 a[nchar(a) <= 1] <- "white"
 a[startsWith(a, "`")] <- "white"
@@ -1141,7 +1132,7 @@ for (i in 1:nrow(csc)) {
                 eval(parse(text=paste0("points(",
                                        (i-1)/(nrow(csc)-1),
                                        ",",
-                                       (j-1)/(ncol(csc)-1), 
+                                       (j-1)/(ncol(csc)-1),
                                        ",",
                                        substring(a[csc[i,j]],2,1000),
                                        ")")))
@@ -1149,7 +1140,7 @@ for (i in 1:nrow(csc)) {
                 eval(parse(text=paste0("points(",
                                        (i-1)/(nrow(csc)-1),
                                        ",",
-                                       0, 
+                                       0,
                                        ",",
                                        substring(a[csc[i,j]],2,1000),
                                        ")")))
@@ -1340,7 +1331,7 @@ for (i in 1:nrow(csc)) {
             do.call(par, key.par)
         tmpbreaks <- breaks
         if (symkey) {
-            
+
             #max.raw <- max(abs(c(x, breaks)), na.rm = TRUE)
             #min.raw <- -max.raw
             #tmpbreaks[1] <- -max(abs(x), na.rm = TRUE)
@@ -1355,22 +1346,22 @@ for (i in 1:nrow(csc)) {
             max.raw <- max.breaks
         }
         z <- seq(min.raw, max.raw, by = min(diff(breaks)/100))
-        
-        
+
+
         # Thang BEGIN
         if (is.null(key_margins)) {
             #tmp <- dev.size("in")
             #key_margins <- c(tmp[1]/2, 1, 0.5, 2)
-            
+
             #if (dev.size("in")[2] < 2) {
             #    message("Why such a short figure?")
             #}
             #key_margins <- c(dev.size("in")[2] * 1.5 , 1, 0.5, 2) # 6/4
             key_margins <- c(dev.size("in")[2]+0.5, 1, 0.5, 2)
         }
-        
+
         par(mar = key_margins)
-        
+
         do_stop <- FALSE
         tryCatch({
             image(z = matrix(z, ncol = 1), col = col, breaks = tmpbreaks,
@@ -1387,9 +1378,9 @@ for (i in 1:nrow(csc)) {
             return(invisible(0))
         }
         # Thang END
-        
+
         par(usr = c(0, 1, 0, 1))
-        
+
         if (is.null(key.xtickfun)) {
             lv <- pretty(breaks)
             xv <- scale01(as.numeric(lv), min.raw, max.raw)

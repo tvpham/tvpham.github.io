@@ -10,7 +10,7 @@ text {font-family:verdana;font-size:14px}
 
 <body>
 <h1>	
-	R: The ibb package for count data
+	R: The countdata package
 	</h1>
 	<p>
 	Recent technology platforms in proteomics and genomics produce count data for quantitative analysis. In proteomics, the number of MS/MS events observed for a protein in the mass spectrometer has been shown to correlate strongly with the protein's abundance in a complex mixture. In genomics, next-generation sequencing technologies use read count as a reliable measure of the abundance of the target transcript. This R package contains two functions for statistical analysis of count data. 
@@ -20,6 +20,16 @@ text {font-family:verdana;font-size:14px}
 <li>The inverted beta-binomial test (<a href="#ibb.test">ibb.test</a>) can be used for paired sample testing (e.g. pre-treatment and post-treatment data).</li>
 </ul>
 
+<p>
+The package is now available and maintained via CRAN <a href="https://cran.r-project.org/package=countdata">https://cran.r-project.org/package=countdata</a>.
+</p>
+
+
+<br>
+The following is for archival purposes.
+<br>
+<br>
+<hr>
 <p>
 <a href="https://tvpham.github.io/ibb/ibb-manual.pdf">User manual</a> | <a href="https://tvpham.github.io/ibb/examples.zip">Example data and R scripts</a>
 </p>
@@ -84,7 +94,7 @@ To check your R version, enter 'version' in your R console.
 All rights reserved by the author. This software package is provided for research purposes in a non-commercial environment. Please do not redistribute.
 </p>
 <p>
-Contact: Thang V Pham &lt;<a href="mailto:t.pham@vumc.nl">t.pham@vumc.nl</a>&gt;
+Contact: Thang V Pham
 </p>
 <br>
 
@@ -330,8 +340,6 @@ write.table(cbind(d, out$fc, out$p.value), file = "example-paired-out.txt", sep 
 <hr>
 
 <br>
-Last updated 2018, Thang Pham
-
-
+Last updated 2021, Thang Pham
 </body>
 </html>
