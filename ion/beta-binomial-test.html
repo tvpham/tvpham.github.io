@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2020-04-17" />
+<meta name="date" content="2021-02-04" />
 
 <title>Beta-binomial test</title>
 
@@ -35,6 +35,15 @@
 
   gtag('config', 'UA-111364566-2');
 </script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -80,6 +89,7 @@ h6 {
   text-align: left;
 }
 </style>
+
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
@@ -390,17 +400,16 @@ div.tocify {
 
 <h1 class="title toc-ignore">Beta-binomial test</h1>
 <h4 class="author">Thang V Pham</h4>
-<h4 class="date">17 April 2020</h4>
+<h4 class="date">4 February 2021</h4>
 
 </div>
 
 
 <div id="installation" class="section level2">
 <h2>Installation</h2>
-<p>The R package <code>ibb</code> implements the beta-binomial test for comparative analysis of count data. The package is available at <a href="https://tvpham.github.io/ibb/">https://tvpham.github.io/ibb/</a>.</p>
-<p>On Windows with a recent version of R, the following is likely to work</p>
-<pre class="r"><code>install.packages(&quot;https://tvpham.github.io/ibb/ibb_18.09.zip&quot;, repos = NULL, type = &quot;win.binary&quot;)</code></pre>
-<p>Like for other R packages, you need to install the package only once before use.</p>
+<p>The R package <code>countdata</code> implements the beta-binomial test for comparative analysis of count data.</p>
+<p>To install the package</p>
+<pre class="r"><code>install.packages(&quot;countdata&quot;)</code></pre>
 </div>
 <div id="two-group-comparison" class="section level2">
 <h2>Two-group comparison</h2>
@@ -410,6 +419,13 @@ div.tocify {
 d &lt;- ion$load(&quot;https://tvpham.github.io/data/example-3groups.txt&quot;)</code></pre>
 <p>Check the head of the loaded data</p>
 <pre class="r"><code>head(d)</code></pre>
+<pre><code>##    a1  a2  a3  b1  b2  b3  c1  c2
+## 1 624 496 509 414 394 375 325 288
+## 2 615 854 930 341 523 360 359 329
+## 3 553 560 745 819 490 481 480 500
+## 4 525 412 401 354 321 310 258 228
+## 5 484 284 315 268 282 307 270 298
+## 6 482 348 400 242 365 367  81 118</code></pre>
 <p>Suppose that there are three groups <code>a</code>, <code>b</code> and <code>c</code> as indicated by the column names. To compare the <code>a</code> samples to the <code>b</code> samples and store the result, call</p>
 <pre class="r"><code>out &lt;- ion$beta_binomial_2g(d,
                             c(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;),
@@ -435,7 +451,7 @@ ion$save(cbind(d, d_norm, out), &quot;output.txt&quot;)</code></pre>
                                  &quot;blue&quot;,&quot;green&quot;, &quot;green&quot;),
             row_margin = 5)</code></pre>
 <p><img src="beta-binomial-test_files/figure-html/unnamed-chunk-8-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
-<p>For <strong>supervised clustering</strong>, we use the data rows with a p-value &lt; 0.05.</p>
+<p>For <strong>supervised clustering</strong>, we use the data rows with p-value &lt; 0.05.</p>
 <pre class="r"><code>ion$heatmap(t(d_norm[out$pval &lt; 0.05, 
                      c(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;, &quot;b1&quot;, &quot;b2&quot;, &quot;b3&quot;)]),
             z_transform = &quot;col&quot;,
@@ -452,7 +468,7 @@ ion$save(cbind(d, d_norm, out), &quot;output.txt&quot;)</code></pre>
                             c(&quot;b1&quot;, &quot;b2&quot;, &quot;b3&quot;),
                             c(&quot;c1&quot;, &quot;c2&quot;))</code></pre>
 <p>The returned value <code>out</code> contains only two components “pval” and “pval.BH” because there is no fold change among three groups.</p>
-<p>There is also a function for a four-group comparison <code>ion$beta_binomial_4g</code>. Refer to the <a href="https://tvpham.github.io/ibb/">manual</a> for comparison of more than four groups.</p>
+<p>There is also a function for a four-group comparison <code>ion$beta_binomial_4g</code>. Refer to the <a href="https://cran.r-project.org/web/packages/countdata/countdata.pdf">manual</a> for comparison of more than four groups.</p>
 </div>
 <div id="paired-sample-test" class="section level2">
 <h2>Paired sample test</h2>
@@ -485,7 +501,7 @@ ion$save(cbind(d, d_norm, out), &quot;output.txt&quot;)</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -524,7 +540,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
