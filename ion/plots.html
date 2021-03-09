@@ -36,6 +36,15 @@
   gtag('config', 'UA-111364566-2');
 </script>
 
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
   pre:not([class]) {
@@ -80,6 +89,7 @@ h6 {
   text-align: left;
 }
 </style>
+
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
@@ -611,6 +621,65 @@ barplot(c(11, 7, 5, 3, 2),
 <p>Close the device and reset the graphics device’s parameters.</p>
 <pre class="r"><code>dev.off()</code></pre>
 </div>
+<div id="pca" class="section level2">
+<h2>PCA</h2>
+<p>An example of PCA visualization of 8 samples.</p>
+<pre class="r"><code>d &lt;- read.delim(&quot;https://tvpham.github.io/data/example-3groups.txt&quot;)
+head(d)</code></pre>
+<pre><code>##    a1  a2  a3  b1  b2  b3  c1  c2
+## 1 624 496 509 414 394 375 325 288
+## 2 615 854 930 341 523 360 359 329
+## 3 553 560 745 819 490 481 480 500
+## 4 525 412 401 354 321 310 258 228
+## 5 484 284 315 268 282 307 270 298
+## 6 482 348 400 242 365 367  81 118</code></pre>
+<pre class="r"><code>pca &lt;- prcomp(t(d), center = TRUE, scale = TRUE)
+
+projection &lt;- predict(pca, newdata = t(d))
+
+plot(projection[, c(&quot;PC1&quot;, &quot;PC2&quot;)], pch = 19, main = &quot;PCA plot&quot;, 
+     col = c(&quot;red&quot;, &quot;red&quot;, &quot;red&quot;, 
+             &quot;green&quot;, &quot;green&quot;, &quot;green&quot;, 
+             &quot;blue&quot;, &quot;blue&quot;), 
+     xlab = &quot;PC 1&quot;, ylab = &quot;PC 2&quot;)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-22-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne" class="section level2">
+<h2>t-SNE</h2>
+<p>An example of t-SNE visualization of 8 samples. The R package <code>Rtsne</code> is required. Try <code>install.packages("Rtsne")</code> if needed.</p>
+<p>Setting a random seed will help in reproducibility. Consult the user manual for setting other parameters; in particular, the parameter <code>perplexity</code> will depend on the sample size.</p>
+<pre class="r"><code>d &lt;- read.delim(&quot;https://tvpham.github.io/data/example-3groups.txt&quot;)
+head(d)</code></pre>
+<pre><code>##    a1  a2  a3  b1  b2  b3  c1  c2
+## 1 624 496 509 414 394 375 325 288
+## 2 615 854 930 341 523 360 359 329
+## 3 553 560 745 819 490 481 480 500
+## 4 525 412 401 354 321 310 258 228
+## 5 484 284 315 268 282 307 270 298
+## 6 482 348 400 242 365 367  81 118</code></pre>
+<pre class="r"><code>require(Rtsne)
+
+set.seed(1)
+
+tsne &lt;- Rtsne(t(d), dims = 2, perplexity = 2, max_iter = 5000) 
+
+plot(tsne$Y, pch = 19, main=&quot;t-SNE&quot;, 
+     col = c(&quot;red&quot;, &quot;red&quot;, &quot;red&quot;, 
+             &quot;green&quot;, &quot;green&quot;, &quot;green&quot;, 
+             &quot;blue&quot;, &quot;blue&quot;),
+     xlab = &quot;t-SNE 1&quot;, ylab = &quot;t-SNE 2&quot;)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-23-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
+<div id="roc-curve" class="section level2">
+<h2>ROC curve</h2>
+<p>The R package <code>pROC</code> is required. Try <code>install.packages("pROC")</code> if needed.</p>
+<pre class="r"><code>require(pROC)
+
+r &lt;- roc(controls = c(2, 3, 5, 7, 11),
+         cases = c(4, 20, 18, 6, 9, 15))
+plot(r, print.auc = TRUE)</code></pre>
+<p><img src="plots_files/figure-html/unnamed-chunk-24-1.png" width="768" style="background-color: #9ecff7; padding:20px; display: inline-block;" style="display: block; margin: auto;" /></p>
+</div>
 <div id="graphics-devices" class="section level2">
 <h2>Graphics devices</h2>
 <p>A frequently used function pair is <code>pdf()</code> and <code>dev.off()</code>. The function <code>pdf()</code> tells R to direct the graphics to a pdf file. The funtion <code>dev.off()</code> tells R to close the file. If in the middle you have done something wrong, do not panic. Call <code>dev.off()</code> several times and start over.</p>
@@ -627,7 +696,7 @@ barplot(c(11, 7, 5, 3, 2),
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -666,7 +735,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
