@@ -1085,6 +1085,72 @@ ion$logistic_regression_bruteforce_5 <- function(y, X, alpha_top = 0.01, n_threa
     
 }
 
+ion$logistic_regression_random_combination <- function(y, X, k, n_samples, alpha_top = 0.01, n_threads = 1, seed = 1) {
+    
+    require(pROC)    
+    
+    message("Checking ", n_samples, " out of ", choose(ncol(X), k), " combinations.")
+    
+    set.seed(seed = seed)
+    
+    N <- ncol(X)
+    
+    res <- list()
+    for (i in 1:n_samples) { 
+        res[[i]] <- sample(N, k)
+    }
+    
+    vec_auc <- rep(NA, length(res))
+    
+    if (n_threads == 1) {
+        for (i in 1:length(res)) {
+            if (i %% 10000 == 0) {
+                message(i, "/", length(res), " = ", floor(i * 100/length(res)), "%")
+            }
+            v <- ion$logistic_regression_LOOCV(y, X[, res[[i]]], is_quadratic = FALSE)
+            r <- roc(controls = v[y == 1], 
+                     cases = v[y != 1],
+                     auc = TRUE, quiet = TRUE)
+            vec_auc[i] <- r$auc
+        }
+    } else {
+        require(parallel)
+        
+        nt <- ifelse(n_threads > 1, n_threads,
+                     parallel::detectCores(logical = FALSE) + n_threads)
+        
+        message("Using ", nt, " core(s)")
+        
+        cl <- makeCluster(nt)
+        clusterExport(cl=cl, varlist=c("y", "X", "roc", "ion"),  envir=environment())
+        
+        vec_auc <- parSapply(cl, res, function(combi) {
+            v <- ion$logistic_regression_LOOCV(y, X[, combi], is_quadratic = FALSE)
+            r <- roc(controls = v[y == 1], 
+                     cases = v[y != 1],
+                     auc = TRUE, quiet = TRUE)
+            r$auc
+        })
+        stopCluster(cl)
+    }
+    
+    ind <- order(vec_auc, decreasing = TRUE)
+    
+    N <- floor(length(res) * alpha_top)
+    
+    message("Accumulate variables in top ", N, " out of ", length(res), " combinations.")
+    
+    h <- rep(0, ncol(X))
+    names(h) <- colnames(X)
+    for (i in 1:N) {
+        h[res[[ind[i]]]] <- h[res[[ind[i]]]] + 1 
+    }
+    ih <- order(h, decreasing = TRUE)
+    
+    return(list(all_combinations = res, vec_auc = vec_auc, frequency_top = h[ih]))
+    
+}
+
 ion$logistic_regression_stepwise_thresholded <- function(y, X, initial_columns = NULL, n = ncol(X)-1, max_refine_round = 10, quantile_cutoff = seq(0, 1, 0.05), pdf_out = "output") {
     
     if (is.null(initial_columns)) {
@@ -1210,16 +1276,29 @@ ion$logistic_regression_stepwise_thresholded <- function(y, X, initial_columns =
                        add = TRUE, 
                        pch = 20, col = "blue", cex = 2)
             
-            abline(h = thres[best_threshold[i]], add = TRUE, lwd = 2, col = "red")
+            abline(h = thres[best_threshold[i]], lwd = 2, col = "red")
         }
         
         dev.off()
     }
 }
 
-ion$logistic_regression_thresholded <- function(y, X, max_refine_round = 100, quantile_cutoff = seq(0, 1, 0.05), pdf_out = "output-lrt") {
-    
+ion$logistic_regression_thresholded_predict <- function(str_model, X) {
     Xnew <- X
+    for (i in 1:ncol(Xnew)) {
+        Xnew[, i] <- as.numeric(Xnew[, i] > str_model$threshold_values[i])
+    }
+    
+    return(predict(str_model$logistic_model,
+                   newdata = Xnew,
+                   type = "response"))
+}
+
+ion$logistic_regression_thresholded <- function(y, X, max_refine_round = 100, quantile_cutoff = seq(0, 1, 0.05), pdf_out = "output-str") {
+    
+    require(pROC)
+    
+    Xnew <- as.matrix(X)
     for (i in 1:ncol(Xnew)) {
         Xnew[, i] <- Xnew[, i] > median(Xnew[, i]) 
     }
@@ -1263,8 +1342,22 @@ ion$logistic_regression_thresholded <- function(y, X, max_refine_round = 100, qu
         best_threshold <- best_thres
             
     }
-        
-    ret <- list(X = Xnew, threshold = best_threshold, auc = max_val)
+    
+    threshold_values <- best_threshold
+    for (i in 1:ncol(X)) {
+        threshold_values[i] <- quantile(X[, i], probs = quantile_cutoff)[best_threshold[i]]
+    }
+    
+    d1 <-  data.frame(y, Xnew)
+    form <- ion$regression_form(c("y", colnames(Xnew)), is_quadratic = FALSE)
+    
+    logistic_model <- glm(form,
+                          data = d1,
+                          family = "binomial")
+    
+    
+    ret <- list(X = Xnew, thresholds = best_threshold, auc = max_val, 
+                threshold_values = threshold_values, logistic_model = logistic_model)
         
     message("AUC = ", max_val)
         
@@ -1295,7 +1388,7 @@ ion$logistic_regression_thresholded <- function(y, X, max_refine_round = 100, qu
                        add = TRUE, 
                        pch = 20, col = "blue", cex = 2)
             
-            abline(h = thres[ret$threshold[i]], add = TRUE, lwd = 2, col = "red")
+            abline(h = ret$threshold_values[i], lwd = 2, col = "red")
         }
         dev.off()
     }    
