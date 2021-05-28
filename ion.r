@@ -824,7 +824,7 @@ ion$str_split_trim <- function(comma_separated_text, sep = ",") {
 
 # Machine learning ----
 
-ion$roc <- function(y, yhat, make_plot = TRUE, ...) {
+ion$auc <- function(y, yhat, make_plot = TRUE, ...) {
     require(pROC)
     r <- roc(controls = yhat[y == 1], 
              cases = yhat[y != 1], quiet = TRUE)
@@ -841,7 +841,7 @@ ion$find_max_auc <- function(y, X) {
     a <- 0
     col_max <- -1
     for (i in 1:ncol(X)) {
-        b <- ion$roc(y, X[,i], make_plot = FALSE)
+        b <- ion$auc(y, X[,i], make_plot = FALSE)
         if (b > a) {
             a <- b
             col_max <- i
@@ -858,25 +858,25 @@ ion$get_folds <- function(y, nfold = 10) {
     a <- which(y == g[1])
     b <- which(y == g[2])
     
-    a.random <- sample(a)
-    b.random <- sample(b)
+    a_random <- sample(a)
+    b_random <- sample(b)
     
     folds <- vector(mode="list", length = nfold)
     
-    for (i in 1:length(a.random)) {
+    for (i in 1:length(a_random)) {
         j <- (i %% nfold) + 1
-        folds[[j]] <- c(folds[[j]], a.random[i])
+        folds[[j]] <- c(folds[[j]], a_random[i])
     }
     
-    for (i in 1:length(b.random)) {
+    for (i in 1:length(b_random)) {
         j <- (i %% nfold) + 1
-        folds[[j]] <- c(folds[[j]], b.random[i])
+        folds[[j]] <- c(folds[[j]], b_random[i])
     }
     
     return(folds)
 }
 
-ion$regression_form <- function(vars, is_quadratic = FALSE) {
+ion$regression_form <- function(vars, is_quadratic = FALSE, env = environment()) {
     
     if (is_quadratic) {
         ret <- paste0(vars[1], " ~ ", vars[2], " + I(", vars[2], "^2)")
@@ -901,7 +901,7 @@ ion$regression_form <- function(vars, is_quadratic = FALSE) {
         }
     }
     
-    return(as.formula(ret))
+    return(as.formula(ret, env = env))
 }
 
 ion$logistic_regression_LOOCV <- function(y, X, is_quadratic = FALSE) {
@@ -1151,140 +1151,13 @@ ion$logistic_regression_random_combination <- function(y, X, k, n_samples, alpha
     
 }
 
-ion$logistic_regression_stepwise_thresholded <- function(y, X, initial_columns = NULL, n = ncol(X)-1, max_refine_round = 10, quantile_cutoff = seq(0, 1, 0.05), pdf_out = "output") {
-    
-    if (is.null(initial_columns)) {
-        initial_columns <- colnames(X)[ion$find_max_auc(y, X)]    
-        message("Starts with maximal AUC: ", initial_columns)
-    }
-    
-    res <- list()
-    
-    if (length(initial_columns) == 1) {
-        res[[1]] <- list(X = X[, initial_columns, drop = FALSE], auc = 0)
-        for (i in 1:ncol(res[[1]]$X)) {
-            res[[1]]$X[, i] <- res[[1]]$X[, i] > median(res[[1]]$X[, i]) 
-        }
-    } else {
-        out <- ion$logistic_regression_thresholded(y, X[, initial_columns, drop = FALSE], quantile_cutoff = quantile_cutoff, pdf_out = NULL)
-        res[[1]] <- list(X = out$X, auc = out$auc)
-    }
-    
-    # build up stepwise
-    for (s in (length(initial_columns)+1):n) {
-        
-        XX <- res[[s-1]]$X
-        
-        ff <- setdiff(colnames(X), colnames(XX))
-        
-        max_val <- -Inf 
-        max_f <- -1
-        max_thres <- -Inf 
-        
-        for (i in 1:length(ff)) {
-            cat(i, ":", max_val, "\n")
-            thres <- quantile(X[, ff[i]], probs = quantile_cutoff)
-            for (j in 2:(length(thres)-1)) {
-                Xnew <- cbind(XX, "x" = as.numeric(X[, ff[i]] > thres[j]))
-                v <- ion$logistic_regression_LOOCV(y, Xnew)
-                
-                r <- roc(controls = v[y == 1], 
-                         cases = v[y != 1],
-                         auc = TRUE, quiet = TRUE)
-                
-                if (r$auc > max_val) {
-                    max_val <- r$auc
-                    max_f <- i
-                    max_thres <- thres[j]
-                }
-            }
-        }
-        
-        message("adding ", ff[max_f], ". Re-fine combination...\n")
-        Xnew <- cbind(XX, "x" = as.numeric(X[, ff[max_f]] > max_thres))
-        colnames(Xnew)[ncol(Xnew)] <- ff[max_f]
-        
-        
-        # refine
-        
-        best_threshold <- NULL
-        
-        for (k in 1:max_refine_round) {
-            cat(k, ":", max_val, "\n")
-            
-            best_thres <- rep(0, ncol(Xnew))
-            
-            for (i in 1:ncol(Xnew)) {
-                
-                thres <- quantile(X[, colnames(Xnew)[i]], probs = quantile_cutoff)
-                
-                Xnew2 <- Xnew
-                max_val <- -Inf
-                
-                for (j in 2:(length(thres)-1)) {
-                    
-                    Xnew2[, i] <- as.numeric(X[, colnames(Xnew)[i]] > thres[j])
-                    
-                    v <- ion$logistic_regression_LOOCV(y, Xnew2)
-                    
-                    r <- roc(controls = v[y == 1], 
-                             cases = v[y != 1],
-                             auc = TRUE, quiet = TRUE)
-                    
-                    if (r$auc > max_val) {
-                        max_val <- r$auc
-                        Xnew <- Xnew2
-                        best_thres[i] <- j
-                    }
-                }
-            }
-            
-            if (identical(best_threshold, best_thres)) {
-                break;
-            }
-            best_threshold <- best_thres
-            
-        }
-        
-        res[[s]] <- list(X = Xnew, auc = max_val)
-        
-        message("AUC = ", max_val)
-        
-        pdf(paste0(pdf_out,"-",s,".pdf"), width = 6, height = 6)
-        v <- ion$logistic_regression_LOOCV(y, res[[s]]$X)
-        r <- roc(controls = v[y == 1], 
-                 cases = v[y != 1], quiet = TRUE)
-        plot(r, print.auc = TRUE)
-        
-        for (i in 1:ncol(res[[s]]$X)) {
-            str <- colnames(res[[s]]$X)[i]
-            thres <- quantile(X[, str], probs = quantile_cutoff)
-            
-            dat <- list(v = X[, str], 
-                        groups = y)
-            boxplot(v ~ groups, 
-                    data = dat,
-                    ylab="",
-                    main = str,
-                    whisklty = 1,
-                    staplelty = 0, range = 0)
-            
-            stripchart(v ~ groups, 
-                       vertical = TRUE, 
-                       data = dat, 
-                       method = "jitter", 
-                       add = TRUE, 
-                       pch = 20, col = "blue", cex = 2)
-            
-            abline(h = thres[best_threshold[i]], lwd = 2, col = "red")
-        }
-        
-        dev.off()
-    }
-}
-
 ion$logistic_regression_thresholded_predict <- function(str_model, X) {
-    Xnew <- X
+    
+    Xnew <- data.frame(X)
+    if (!identical(colnames(Xnew), colnames(str_model$X))) {
+        stop("Variables in data and model do not match.")
+    }
+    
     for (i in 1:ncol(Xnew)) {
         Xnew[, i] <- as.numeric(Xnew[, i] > str_model$threshold_values[i])
     }
@@ -1294,7 +1167,11 @@ ion$logistic_regression_thresholded_predict <- function(str_model, X) {
                    type = "response"))
 }
 
-ion$logistic_regression_thresholded <- function(y, X, max_refine_round = 100, quantile_cutoff = seq(0, 1, 0.05), pdf_out = "output-str") {
+ion$logistic_regression_thresholded_LOO_AUC <- function(y, X, max_refine_round = 100, 
+                                                n_quantile = 4,
+                                                pdf_out = "output-str") {
+    
+    quantile_cutoff <- seq(0, 1, 1 / n_quantile)
     
     require(pROC)
     
@@ -1357,7 +1234,7 @@ ion$logistic_regression_thresholded <- function(y, X, max_refine_round = 100, qu
     
     
     ret <- list(X = Xnew, thresholds = best_threshold, auc = max_val, 
-                threshold_values = threshold_values, logistic_model = logistic_model)
+                threshold_values = threshold_values, logistic_model = logistic_model, variables = colnames(Xnew))
         
     message("AUC = ", max_val)
         
@@ -1397,6 +1274,417 @@ ion$logistic_regression_thresholded <- function(y, X, max_refine_round = 100, qu
     
 }
 
+ion$logistic_regression_stepwise_thresholded_LOO_AUC <- function(y, X, initial_columns = NULL, 
+                                                         n = ncol(X) - (if (is.null(initial_columns)) 1 else length(initial_columns)), 
+                                                         max_optimization_round = 10, 
+                                                         n_quantile = 4,
+                                                         pdf_out = "output") {
+    
+    quantile_cutoff <- seq(0, 1, 1/n_quantile)
+    
+    if (is.null(initial_columns)) {
+        initial_columns <- colnames(X)[ion$find_max_auc(y, X)]    
+        message("Starts with maximal AUC: ", initial_columns)
+    }
+    
+    res <- list()
+    
+#    if (length(initial_columns) == 1) {
+#        res[[1]] <- list(X = X[, initial_columns, drop = FALSE], auc = 0)
+#        for (i in 1:ncol(res[[1]]$X)) {
+#            res[[1]]$X[, i] <- res[[1]]$X[, i] > median(res[[1]]$X[, i]) 
+#        }
+#    } else {
+        res[[1]] <- ion$logistic_regression_thresholded_LOO_AUC(y, X[, initial_columns, drop = FALSE], 
+                                                        n_quantile = n_quantile, pdf_out = NULL)
+#        #res[[1]] <- list(X = out$X, auc = out$auc)
+#    }
+    
+    # build up stepwise
+    for (s in (length(initial_columns)+1):n) {
+        
+        XX <- res[[s-1]]$X
+        
+        ff <- setdiff(colnames(X), colnames(XX))
+        
+        max_val <- -Inf 
+        max_f <- -1
+        max_thres <- -Inf 
+        
+        for (i in 1:length(ff)) {
+            #cat(i, ":", max_val, "\n")
+            thres <- quantile(X[, ff[i]], probs = quantile_cutoff)
+            for (j in 2:(length(thres)-1)) {
+                Xnew <- cbind(XX, "x" = as.numeric(X[, ff[i]] > thres[j]))
+                v <- ion$logistic_regression_LOOCV(y, Xnew)
+                
+                r <- roc(controls = v[y == 1], 
+                         cases = v[y != 1],
+                         auc = TRUE, quiet = TRUE)
+                
+                if (r$auc > max_val) {
+                    max_val <- r$auc
+                    max_f <- i
+                    max_thres <- thres[j]
+                }
+            }
+        }
+        
+        message("adding ", ff[max_f], ". Optimizing combination ...")
+        Xnew <- cbind(XX, "x" = as.numeric(X[, ff[max_f]] > max_thres))
+        colnames(Xnew)[ncol(Xnew)] <- ff[max_f]
+        
+        # Optimize existing combination
+        
+        best_threshold <- NULL
+        
+        for (k in 1:max_optimization_round) {
+            #cat(k, ":", max_val, "\n")
+            
+            best_thres <- rep(0, ncol(Xnew))
+            
+            for (i in 1:ncol(Xnew)) {
+                
+                thres <- quantile(X[, colnames(Xnew)[i]], probs = quantile_cutoff)
+                
+                Xnew2 <- Xnew
+                max_val <- -Inf
+                
+                for (j in 2:(length(thres)-1)) {
+                    
+                    Xnew2[, i] <- as.numeric(X[, colnames(Xnew)[i]] > thres[j])
+                    
+                    v <- ion$logistic_regression_LOOCV(y, Xnew2)
+                    
+                    r <- roc(controls = v[y == 1], 
+                             cases = v[y != 1],
+                             auc = TRUE, quiet = TRUE)
+                    
+                    if (r$auc > max_val) {
+                        max_val <- r$auc
+                        Xnew <- Xnew2
+                        best_thres[i] <- j
+                    }
+                }
+            }
+            
+            if (identical(best_threshold, best_thres)) {
+                break;
+            }
+            best_threshold <- best_thres
+            
+        }
+        
+        #res[[s]] <- list(X = Xnew, auc = max_val)
+        res[[s]] <- ion$logistic_regression_thresholded_LOO_AUC(y, X[, colnames(Xnew), drop = FALSE], 
+                                                        n_quantile = n_quantile, pdf_out = NULL)
+        
+        #message("AUC = ", max_val)
+        
+        if (!is.null(pdf_out)) {
+            pdf(paste0(pdf_out,"-",s,".pdf"), width = 6, height = 6)
+            v <- ion$logistic_regression_LOOCV(y, res[[s]]$X)
+            r <- roc(controls = v[y == 1], 
+                     cases = v[y != 1], quiet = TRUE)
+            plot(r, print.auc = TRUE)
+            
+            for (i in 1:ncol(res[[s]]$X)) {
+                str <- colnames(res[[s]]$X)[i]
+                thres <- quantile(X[, str], probs = quantile_cutoff)
+                
+                dat <- list(v = X[, str], 
+                            groups = y)
+                boxplot(v ~ groups, 
+                        data = dat,
+                        ylab="",
+                        main = str,
+                        whisklty = 1,
+                        staplelty = 0, range = 0)
+                
+                stripchart(v ~ groups, 
+                           vertical = TRUE, 
+                           data = dat, 
+                           method = "jitter", 
+                           add = TRUE, 
+                           pch = 20, col = "blue", cex = 2)
+            
+                abline(h = thres[best_threshold[i]], lwd = 2, col = "red")
+            }
+        
+            dev.off()
+        }
+    }
+    
+    return(res)
+}
+
+
+ion$logistic_regression_thresholded_add <- function(y, X, Xi, quantile_cutoff) {
+
+    d0 <- data.frame(y = y, X)
+    m0 <- glm(ion$regression_form(colnames(d0)),
+              data = d0,
+              family = "binomial")
+    thres <- quantile(Xi, probs = quantile_cutoff)
+    
+    min_p <- 1
+    min_i <- floor(length(quantile_cutoff) / 2) + 1 # just take the middle one
+    
+    for (i in 2:(length(thres)-1)) {
+        d1 <- cbind(d0, yy = as.numeric(Xi > thres[i])) 
+        m1 <- glm(ion$regression_form(colnames(d1)),
+                  data = d1,
+                  family = "binomial")
+        
+        pval <- anova(m0, m1, test = "LRT")$`Pr(>Chi)`[2]
+        if (!is.na(pval) && pval < min_p) {
+            min_p <- pval
+            min_i <- i
+        }
+    }
+    return(list(i = min_i, p = min_p, thres = thres[min_i]))
+}
+
+
+ion$logistic_regression_thresholded_add_0 <- function(y, X, Xi, quantile_cutoff) {
+    
+    d0 <- data.frame(y = y, X)
+    
+    thres <- quantile(Xi, probs = quantile_cutoff) 
+    
+    d1 <- d0
+    
+    for (i in 2:(length(thres)-1)) {
+        d1 <- cbind(d1, as.numeric(Xi > thres[i])) 
+        colnames(d1)[ncol(d1)] <- paste0("yy", i)
+    }
+    
+    m0 <- glm(ion$regression_form(colnames(d0), env = environment()),
+              data = d1,
+              family = "binomial")
+    
+    scope <- ion$regression_form(colnames(d1), env = environment())
+    
+    a <- add1(m0, scope = scope, test = "LRT", data = d1)
+
+    return(a)
+    
+    #return(list(i = min_i, p = min_p, thres = thres[min_i]))
+}
+
+
+ion$logistic_regression_thresholded <- function(y, X, max_optimization_round = 100, 
+                                                n_quantile = 4,
+                                                pdf_out = "output-str") {
+    
+    quantile_cutoff <- seq(0, 1, 1 / n_quantile)
+    p <- quantile_cutoff[floor(n_quantile/2) + 1]
+    
+    Xnew <- as.matrix(X)
+    for (i in 1:ncol(Xnew)) {
+        thres <- quantile(X[, i], probs = p)
+        Xnew[, i] <- as.numeric(Xnew[, i] > thres)
+    }
+    
+    best_threshold <- NULL
+    
+    for (k in 1:max_optimization_round) {
+        
+        if (ncol(Xnew) > 1) {
+        best_thres <- rep(0, ncol(Xnew))
+        
+        for (i in 1:ncol(Xnew)) {
+            
+            a <- ion$logistic_regression_thresholded_add(y, Xnew[, -i, drop = FALSE],
+                                                         X[, i, drop = FALSE], 
+                                                         quantile_cutoff)
+            Xnew[, i] <- as.numeric(X[, i, drop = FALSE] > a$thres)
+            best_thres[i] <- a$i
+        }
+        } else {
+            best_thres <- floor(length(quantile_cutoff)/2)+1
+        }
+        
+        if (identical(best_threshold, best_thres)) {
+            break;
+        }
+        best_threshold <- best_thres
+        
+    }
+    
+    threshold_values <- best_threshold
+    for (i in 1:ncol(X)) {
+        threshold_values[i] <- quantile(X[, i], probs = quantile_cutoff[best_threshold[i]])
+    }
+    
+    d1 <-  data.frame(y, Xnew)
+    form <- ion$regression_form(colnames(d1), is_quadratic = FALSE)
+    
+    logistic_model <- glm(form,
+                          data = d1,
+                          family = "binomial")
+    
+    
+    ret <- list(X = Xnew, thresholds = best_threshold,
+                threshold_values = threshold_values, 
+                logistic_model = logistic_model, variables = colnames(Xnew))
+    
+    if (!is.null(pdf_out)) {
+        require(pROC)
+        pdf(paste0(pdf_out,".pdf"), width = 6, height = 6)
+        v <- ion$logistic_regression_LOOCV(y, ret$X)
+        r <- roc(controls = v[y == 1], 
+                 cases = v[y != 1], quiet = TRUE)
+        plot(r, print.auc = TRUE)
+        
+        for (i in 1:ncol(ret$X)) {
+            str <- colnames(ret$X)[i]
+            thres <- quantile(X[, str], probs = quantile_cutoff)
+            
+            dat <- list(v = X[, str], 
+                        groups = y)
+            boxplot(v ~ groups, 
+                    data = dat,
+                    ylab="",
+                    main = str,
+                    whisklty = 1,
+                    staplelty = 0, range = 0)
+            
+            stripchart(v ~ groups, 
+                       vertical = TRUE, 
+                       data = dat, 
+                       method = "jitter", 
+                       add = TRUE, 
+                       pch = 20, col = "blue", cex = 2)
+            
+            abline(h = ret$threshold_values[i], lwd = 2, col = "red")
+        }
+        dev.off()
+    }    
+    
+    return(ret)
+    
+}
+
+ion$logistic_regression_stepwise_thresholded <- function(y, X, initial_columns = NULL, 
+                                                           n = ncol(X) - (if (is.null(initial_columns)) 1 else length(initial_columns)), 
+                                                           max_optimization_round = 10, 
+                                                           n_quantile = 4,
+                                                           pdf_out = "output") {
+    
+    quantile_cutoff <- seq(0, 1, 1/n_quantile)
+    
+    if (is.null(initial_columns)) {
+        initial_columns <- colnames(X)[ion$find_max_auc(y, X)]    
+        message("Starts with maximal AUC: ", initial_columns)
+    }
+    
+    res <- list()
+    
+    res[[1]] <- ion$logistic_regression_thresholded(y, X[, initial_columns, drop = FALSE], 
+                                                    n_quantile = n_quantile, pdf_out = NULL)
+
+    # build up stepwise
+    for (s in (length(initial_columns)+1):n) {
+        
+        ff <- setdiff(colnames(X), colnames(res[[s-1]]$X))
+        
+        min_p <- 2
+        min_f <- -1
+        min_t <- -1
+        
+        for (i in 1:length(ff)) {
+
+            a <- ion$logistic_regression_thresholded_add(y, res[[s-1]]$X,
+                                                         X[, ff[i], drop = FALSE], 
+                                                         quantile_cutoff)
+            
+            if (a$p < min_p) {
+                min_p <- a$p;
+                min_f <- i
+                min_t <- a$thres
+            }
+        }
+        
+        message("adding ", ff[min_f], "; p = ", min_p, "\nOptimizing combination ...")
+        Xnew <- cbind(res[[s-1]]$X, "yy" = as.numeric(X[, ff[min_f]] > min_t))
+        colnames(Xnew)[ncol(Xnew)] <- ff[min_f]
+        
+        res[[s]] <- ion$logistic_regression_thresholded(y, X[, colnames(Xnew), drop = FALSE], 
+                                                        max_optimization_round = max_optimization_round,
+                                                        n_quantile = n_quantile, pdf_out = NULL)
+        
+        if (!is.null(pdf_out)) {
+            pdf(paste0(pdf_out, "-", s, ".pdf"), width = 6, height = 6)
+            v <- ion$logistic_regression_LOOCV(y, res[[s]]$X)
+            r <- roc(controls = v[y == 1], 
+                     cases = v[y != 1], quiet = TRUE)
+            plot(r, print.auc = TRUE)
+            
+            for (i in 1:ncol(res[[s]]$X)) {
+                str <- colnames(res[[s]]$X)[i]
+                thres <- quantile(X[, str], probs = quantile_cutoff)
+                
+                dat <- list(v = X[, str], 
+                            groups = y)
+                boxplot(v ~ groups, 
+                        data = dat,
+                        ylab="",
+                        main = str,
+                        whisklty = 1,
+                        staplelty = 0, range = 0)
+                
+                stripchart(v ~ groups, 
+                           vertical = TRUE, 
+                           data = dat, 
+                           method = "jitter", 
+                           add = TRUE, 
+                           pch = 20, col = "blue", cex = 2)
+                
+                abline(h = res[[s]]$threshold_values[i], lwd = 2, col = "red")
+            }
+            
+            dev.off()
+        }
+    }
+    
+    return(res)
+}
+
+
+ion$logistic_regression_stepwise_thresholded_LOOCV <- function(y, X, initial_columns = NULL, 
+                                                               n = ncol(X) - (if (is.null(initial_columns)) 1 else length(initial_columns)), 
+                                                               n_quantile = seq(2, 20, 2),
+                                                               max_optimization_round = 10) {
+    if (nrow(X) != length(y)) {
+        stop("The number of samples (X, y) does not match.\n")
+    }
+    
+    v <- matrix(0, nrow = length(n_quantile), ncol = n)
+    
+    for (nq in 1:length(n_quantile)) {    
+
+        z <- matrix(0, nrow = nrow(X), ncol = n)
+        
+        for (r in 1:nrow(X)) {
+            message("n_quantile = ", nq, "/", length(n_quantile), "; leaving out ", r, "/", nrow(X))
+            out <- ion$logistic_regression_stepwise_thresholded(y[-r], X[-r, , drop = FALSE], 
+                                                                n = n, n_quantile = n_quantile[nq], 
+                                                                max_optimization_round = max_optimization_round,
+                                                                pdf_out = NULL)
+            for (i in 1:n) {
+                z[r, i] <- ion$logistic_regression_thresholded_predict(out[[i]], X[r, out[[i]]$variables, drop = FALSE])
+            }
+        }
+        
+        for (i in 1:n) {
+            v[nq, i] <- ion$auc(y, z[, i], make_plot = FALSE)
+        }
+    }
+    
+    return(v)
+    
+}
 
 # Others ----
 
