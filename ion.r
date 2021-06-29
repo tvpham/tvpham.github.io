@@ -514,6 +514,39 @@ ion$limma_3g <- function(dat, group1, group2, group3) {
                  pval.BH = ion$impute(p.adjust(pval, method = "BH"), value = 1.0)))
 }
 
+ion$limma_4g <- function(dat, group1, group2, group3, group4) {
+    
+    require(limma)
+    require(Biobase)
+    
+    N <- nrow(dat)
+    
+    
+    myeset <- ExpressionSet(assayData = as.matrix(dat[, c(group1, group2, group3, group4)]))
+    
+    groups <- factor(c(rep("g1", length(group1)),
+                       rep("g2", length(group2)),
+                       rep("g3", length(group3)),
+                       rep("g4", length(group4))))
+    
+    design <- model.matrix(~ 0 + groups)
+    
+    colnames(design) <- c("g1", "g2", "g3", "g4")
+    
+    contrast.matrix <- makeContrasts(g2-g1, g3-g1, g4-g1, g3-g2, g4-g2, g4-g3, levels = design)
+    
+    fit <- lmFit(myeset, design)
+    
+    fit2 <- contrasts.fit(fit, contrast.matrix)
+    fit2 <- eBayes(fit2)
+    
+    pval  <- fit2$F.p.value
+    
+    return (list(dd = dat[, c(group1,  group2, group3, group4)],
+                 pval = ion$impute(pval, value = 1.0),
+                 pval.BH = ion$impute(p.adjust(pval, method = "BH"), value = 1.0)))
+}
+
 ion$limma_F <- function(dat, groups) {
 
     require(limma)
