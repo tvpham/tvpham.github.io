@@ -94,20 +94,28 @@ ion$heatmap <- function(d,
 
                         color_key_margins = NULL,
                         # margins of the color key, default c(5, 1, 0.5, 2) if NULL
+                        
+                        key_margins,
+                        # not used
 
                         separator = FALSE,
                         # a separator between cells
 
                         ...) {
 
+    if (!missing(key_margins)) {
+        message("Please use 'color_key_margins' instead of 'key_margins'.")
+        return(invisible(NULL))
+    }
+    
     zscore <- z_transform != "none"
 
     if (z_transform == "row") {
-        message("\nRows are tranformed into z-values\n\n")
+        message("Rows are tranformed into z-values\n")
         d_heatmap <- t(scale(t(d)))
     } else {
         if (z_transform == "col") {
-            message("\nColumns are tranformed into z-values\n\n")
+            message("Columns are tranformed into z-values\n")
             d_heatmap <- scale(d)
         } else {
             d_heatmap <- d
@@ -122,13 +130,13 @@ ion$heatmap <- function(d,
 
         if (col_distance == "pearson") {
             col_dist <- as.dist(1 - cor(col_data, method = "pearson", use = "pairwise.complete.obs"))
-            message("Using (1 - Pearson correlation) as distance for columns.\n")
+            message("Using (1 - Pearson correlation) as distance for columns.")
         } else if (col_distance == "spearman") {
             col_dist <- as.dist(1 - cor(col_data, method = "spearman", use = "pairwise.complete.obs"))
-            message("Using (1 - Spearman correlation) as distance for columns.\n")
+            message("Using (1 - Spearman correlation) as distance for columns.")
         } else {
             col_dist <- dist(t(col_data), method = col_distance)
-            message("Using ", col_distance, " distance for columns.\n")
+            message("Using ", col_distance, " distance for columns.")
         }
 
         if (sum(is.na(col_dist)) > 0) {
@@ -146,7 +154,6 @@ ion$heatmap <- function(d,
         }
     }
 
-    message("\n")
 
     if (!is.null(row_data)) {
 
@@ -156,13 +163,13 @@ ion$heatmap <- function(d,
 
         if (row_distance == "pearson") {
             row_dist <- as.dist(1 - cor(t(row_data), method = "pearson", use = "pairwise.complete.obs"))
-            message("Using (1 - Pearson correlation) as distance for rows.\n")
+            message("Using (1 - Pearson correlation) as distance for rows.")
         } else if (row_distance == "spearman") {
             row_dist <- as.dist(1 - cor(t(row_data), method = "spearman", use = "pairwise.complete.obs"))
-            message("Using (1 - Spearman correlation) as distance for rows.\n")
+            message("Using (1 - Spearman correlation) as distance for rows.")
         } else {
             row_dist <- dist(row_data, method = row_distance)
-            message("Using ", row_distance, " distance for rows.\n")
+            message("Using ", row_distance, " distance for rows.")
         }
 
         if (sum(is.na(row_dist)) > 0) {
@@ -171,7 +178,7 @@ ion$heatmap <- function(d,
         }
 
         row_tree <- hclust(row_dist, method = row_linkage)
-        message("Using ", row_linkage, " linkage for rows.\n")
+        message("Using ", row_linkage, " linkage for rows.")
 
         if (row_reorder) {
             row_clustering <- reorder(as.dendrogram(row_tree), 1:ncol(as.matrix(row_dist)), agglo.FUN = mean)
@@ -180,8 +187,6 @@ ion$heatmap <- function(d,
             row_clustering <- as.dendrogram(row_tree)
         }
     }
-
-    message("\n")
 
     colsep  <- seq(1, ncol(d_heatmap))
     rowsep  <- seq(1, nrow(d_heatmap))
@@ -256,6 +261,21 @@ ion$heatmap <- function(d,
                                          ...)
 }
 
+ion$plot_pca <- function(d, 
+                         pch = 19, 
+                         main = "PCA plot", 
+                         xlab = "PC 1", 
+                         ylab = "PC 2", ...) {
+    
+    pca <- prcomp(t(d), center = TRUE, scale = TRUE)
+    
+    projection <- predict(pca, newdata = t(d))
+    
+    plot(projection[, c("PC1", "PC2")], pch = pch, main = main, 
+         xlab = xlab, ylab = ylab, ...)
+    
+}
+
 # Normalization ----
 
 ion$normalize_global <- function(d, total_count = NULL) {
@@ -302,6 +322,9 @@ ion$impute <- function(d, method = "constant", value = 0, seed = 1203) {
 
         if (method == "constant") {
             dd[is.na(dd)] <- value
+        } else if (method == "min") {
+            global_min <- min(d, na.rm=TRUE)
+            dd[is.na(dd)] <- global_min
         } else if (method == "normal") {
 
             set.seed(seed)
