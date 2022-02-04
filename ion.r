@@ -1,8 +1,8 @@
 # Author: Thang V Pham
 #
-# Copyright Thang V Pham, 2018-2020
+# Copyright Thang V Pham, 2018-2022
 #
-# Version: 20.03.03
+# Version: 22.02.04
 #
 # NOTE: sourcing this will replace any existing 'ion' object
 
@@ -835,6 +835,40 @@ ion$beta_binomial_4g <- function(dat, group1, group2, group3, group4, total_coun
     return (list(pval = out$p.value,
                  pval.BH = p.adjust(out$p.value, method = "BH")))
 }
+
+ion$beta_binomial_5g <- function(dat, group1, group2, group3, group4, group5, total_count = NULL) {
+    
+    require(countdata)
+    
+    d <- dat[, c(group1, group2, group3, group4, group5)]
+    
+    out <- countdata::bb.test(d,
+                              if (is.null(total_count)) colSums(d) else total_count,
+                              c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3)), 
+                                rep("d", length(group4)), rep("e", length(group5))),
+                              n.threads = -1)
+    
+    return (list(pval = out$p.value,
+                 pval.BH = p.adjust(out$p.value, method = "BH")))
+}
+
+
+ion$beta_binomial_6g <- function(dat, group1, group2, group3, group4, group5, group6, total_count = NULL) {
+    
+    require(countdata)
+    
+    d <- dat[, c(group1, group2, group3, group4, group5, group6)]
+    
+    out <- countdata::bb.test(d,
+                              if (is.null(total_count)) colSums(d) else total_count,
+                              c(rep("a", length(group1)), rep("b", length(group2)), rep("c", length(group3)), 
+                                rep("d", length(group4)), rep("e", length(group5)), rep("f", length(group6))),
+                              n.threads = -1)
+    
+    return (list(pval = out$p.value,
+                 pval.BH = p.adjust(out$p.value, method = "BH")))
+}
+
 
 ion$cuzick_test <- function(x, z, test.type=c("two.sided", "upper", "lower")) {
     
