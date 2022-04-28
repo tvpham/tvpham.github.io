@@ -273,8 +273,9 @@ ion$plot_pca <- function(d,
     
     plot(projection[, c("PC1", "PC2")], pch = pch, main = main, 
          xlab = xlab, ylab = ylab, ...)
-    
 }
+
+
 
 # Normalization ----
 
@@ -698,16 +699,19 @@ ion$wilcox_test <- function(dat, group1, group2, paired = FALSE) {
         y <- as.numeric(dat[r, group2])
 
         # calculate FC in case the test fails
-        logFC[r] <- mean(y, na.rm = TRUE) - mean(x, na.rm = TRUE)
+        logFC[r] <- median(y, na.rm = TRUE) - median(x, na.rm = TRUE)
         if (is.nan(logFC[r])) {
             logFC[r] <- 0
         }
 
         try({
-            res <- wilcox.test(x, y = y, paired = paired, na.action=na.omit, conf.int = TRUE)
-            pval[r] <- res$p.value
             if (paired) {
+                res <- wilcox.test(x, y = y, paired = TRUE, na.action=na.omit, conf.int = TRUE)
+                pval[r] <- res$p.value
                 logFC[r] <- res$estimate[1]
+            } else {
+                res <- wilcox.test(x, y = y, na.action=na.omit)
+                pval[r] <- res$p.value    
             }
         }, silent = TRUE)
     }
