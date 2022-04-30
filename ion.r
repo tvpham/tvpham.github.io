@@ -276,6 +276,58 @@ ion$plot_pca <- function(d,
 }
 
 
+ion$plot_volcano <- function (logFC, pval, 
+                              main = "", 
+                              pval_thresh = 0.05, 
+                              fc_thres = log2(2.0), 
+                          xlab = "Log2 fold change") {
+    x <- logFC
+    x[is.na(x)] <- 0
+    
+    y <- -log10(pval)
+    log_pval_thresh <- -log10(pval_thresh)
+    
+    point_color <- rep("gray10",length(x))
+    
+    r_significant <- y > log_pval_thresh
+    r_up   <- x > fc_thres
+    r_down <- x < -fc_thres
+    
+    up_color <- "red"
+    down_color <- "blue"
+    
+    ret <- r_significant & (r_up | r_down)
+    ret[is.na(ret)] <- FALSE
+    
+    point_color[ r_significant & r_up ] <- up_color
+    point_color[ r_significant & r_down ] <- down_color
+    
+    x_width <- max(abs(x)) * 1.2
+    
+    plot(x, y, main = main, xlab = xlab,
+         pch = 20,
+         ylim = c(0, max(y) * 1.2),
+         xlim = c(-x_width, x_width),
+         ylab = "-log10 p-value",
+         col = point_color)
+    
+    abline(h = log_pval_thresh, lty=2, col="gray")
+    
+    text(1 - x_width, log_pval_thresh,
+         labels = paste0("pval=", sprintf("%.2f",pval_thresh)), pos=3)
+    
+    abline(v = fc_thres, lty = 2, col = "gray")
+    abline(v = -fc_thres, lty=2, col = "gray")
+    
+    legend("topright", border = up_color, col = up_color,
+           legend= paste0("UP: ", sum(r_significant & r_up )), bty = "n", pch = 20, pt.cex = 3)
+    
+    legend("topleft", border = down_color, col = down_color,
+           legend= paste0("DOWN: ", sum(r_significant & r_down )), bty = "n", pch = 20, pt.cex = 3)
+    
+    return(ret)
+}
+
 
 # Normalization ----
 
@@ -1826,12 +1878,17 @@ ion$.heatmap.2_gplots.3.0.1_modified <- function (x, Rowv = TRUE, Colv = if (sym
     if (!missing(breaks) && (scale != "none"))
         warning("Using scale=\"row\" or scale=\"column\" when breaks are",
             "specified can produce unpredictable results.", "Please consider using only one or the other.")
-    if (is.null(Rowv) || is.na(Rowv))
+    
+    #TP 220430
+    #if (is.null(Rowv) || is.na(Rowv))
+    if (is.null(Rowv))
         Rowv <- FALSE
-    if (is.null(Colv) || is.na(Colv))
+    #if (is.null(Colv) || is.na(Colv))
+    if (is.null(Colv))
         Colv <- FALSE
     else if (all(Colv == "Rowv"))
         Colv <- Rowv
+    
     if (length(di <- dim(x)) != 2 || !is.numeric(x))
         stop("`x' must be a numeric matrix")
     nr <- di[1]
