@@ -752,7 +752,7 @@ ion$wilcox_test <- function(dat, group1, group2, paired = FALSE) {
 
         # calculate FC in case the test fails
         logFC[r] <- median(y, na.rm = TRUE) - median(x, na.rm = TRUE)
-        if (is.nan(logFC[r])) {
+        if (is.na(logFC[r]) || is.nan(logFC[r])) {
             logFC[r] <- 0
         }
 
