@@ -3,12 +3,9 @@
 #
 # Copyright Thang V Pham, 2018-2024
 #
-# Version: 24.05.28
+# Version: 24.05.31
 #
 # NOTE: sourcing this will replace any existing 'ion' object
-#
-#
-# 240411: ion$auc return > 0.5, default no plot.
 #
 # This code contains a modified version of the heatmap.2 function in the R gplots
 # package (version 3.0.1).
